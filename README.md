@@ -34,7 +34,7 @@ docker run --name postgres -e POSTGRES_USER=youruser -e POSTGRES_PASSWORD=yourpa
 ```
 
 ### Step 3: Configure Environment Variables
-Create a .env file in the root directory of the project with the following content:
+Create a .env file (or copy and the .env.dist file) in the root directory of the project with the following content:
 
 env
 ```
@@ -99,6 +99,24 @@ GET /metadata
   "image": "Example Image URL"
 }
 ```
+
+## Running with Docker Compose
+
+### Step 1: Install Docker Compose
+
+Follow the instructions [here](https://docs.docker.com/compose/install/) to install Docker Compose.
+
+### Step 2: Start the Application
+
+Run `docker-compose --build` to start the application. This will:
+
+- Build the application container.
+- Start a PostgreSQL container.
+- Start the application container.
+
+### Step 3: Shut down the application
+
+Run `docker-compose down --volumes` to shut down the application and remove the associated anonymous volumes.
 
 ## Acknowledgements
 * [Gin Gonic](https://github.com/gin-gonic/gin) for the web framework.
