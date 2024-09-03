@@ -6,13 +6,14 @@ NFT IPFS metadata fetcher.
 
 ### Todo
 
-- [ ] Containerize application  
-- [ ] Setup local development environment with Postgres  
-- [ ] Setup CI/CD pipeline with Terraform and AWS
+- [ ] Setup CI/CD pipeline  
 
 ### In Progress
 
+- [ ] Create IaC with Terraform for AWS infrastructure  
 
 ### Done ✓
 
+- [x] Setup local development environment with Postgres  
+- [x] Containerize application  
 

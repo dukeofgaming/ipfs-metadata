@@ -118,6 +118,20 @@ Run `docker-compose --build` to start the application. This will:
 
 Run `docker-compose down --volumes` to shut down the application and remove the associated anonymous volumes.
 
+## AWS Infrastructure Setup
+
+You will need Terraform for this, which can be installed from the instructions here [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+
+### Setup / Initialize the core state
+
+Copy the `.env.sh.dist` file to `.env.sh` and fill in the values for your AWS account. Once you do that, `source .env.sh` to set the environment variables in your shell session.
+
+Once you do that, run `terraform init` and `terraform apply` if it's your first run for a new set of environments (you will need to comment the `backend "s3" {}` block in `iac/terraform/environments/main.tf`).
+
+If this is not your first run, use `terraform init -backend-config=backend.hcl` if you're migrating to an S3 backend or using an existing one.
+
+For full instructions including how to migrate to an S3 backend from an initial run (highly recommended), see the [README](iac/terraform/environments/README.md) in the `iac/terraform/environments` directory.
+
 ## Acknowledgements
 * [Gin Gonic](https://github.com/gin-gonic/gin) for the web framework.
 * [sqlx](https://github.com/jmoiron/sqlx) for SQL database interactions.
