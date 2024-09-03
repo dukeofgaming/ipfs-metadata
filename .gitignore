@@ -2,4 +2,4 @@
 .env.sh
 .terraform
 
-iac/terraform/environments/backend.hcl
+backend.hcl
