@@ -16,8 +16,8 @@ module "alb" {
       type = "ingress"
 
       protocol  = "TCP"
-      from_port = 80
-      to_port   = 80
+      from_port = var.container_port
+      to_port   = var.container_port
 
       description = "Permit incoming HTTP requests from the internet"
 

@@ -10,5 +10,6 @@ terraform {
 }
 
 locals {
-  environment = "${var.environment}-${terraform.workspace}"
+  environment    = "${var.environment}-${terraform.workspace}"
+  container_name = var.project
 }

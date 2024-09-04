@@ -10,7 +10,7 @@ resource "aws_ecs_service" "this" {
   }
 
   load_balancer {
-    container_name   = "${var.project}-${local.environment}-nginx"
+    container_name   = local.container_name
     container_port   = var.container_port
     target_group_arn = module.alb.target_group_arns[0]
   }
