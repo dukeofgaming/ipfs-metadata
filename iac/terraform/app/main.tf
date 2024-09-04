@@ -8,3 +8,7 @@ terraform {
 
   backend "s3" {}
 }
+
+locals {
+  environment = "${var.environment}-${terraform.workspace}"
+}

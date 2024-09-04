@@ -5,9 +5,15 @@ variable "aws_region" {
 
 }
 
-variable "app_name" {
+variable "project" {
   description = "The name of the application"
   type        = string
+}
+
+variable "environment" {
+  description = "The environment to deploy the application"
+  type        = string
+  default     = "dev"
 }
 
 # ECS

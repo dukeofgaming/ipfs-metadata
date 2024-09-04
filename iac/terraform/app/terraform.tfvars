@@ -1,2 +1,2 @@
-image    = "nginx:1.27.1"
-app_name = "nft-ipfs-metadata"
+image   = "nginx:1.27.1"
+project = "nft-ipfs-metadata"
