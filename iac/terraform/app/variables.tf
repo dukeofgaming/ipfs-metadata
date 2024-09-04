@@ -17,7 +17,7 @@ variable "environment" {
 }
 
 # ECS
-variable "image" {
+variable "container_image" {
   description = "The Docker image to use for the ECS task"
   type        = string
 }
