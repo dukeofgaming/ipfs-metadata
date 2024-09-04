@@ -5,7 +5,19 @@ variable "aws_region" {
 
 }
 
+variable "app_name" {
+  description = "The name of the application"
+  type        = string
+}
+
+# ECS
 variable "image" {
   description = "The Docker image to use for the ECS task"
   type        = string
+}
+
+variable "container_port" {
+  description = "The port the container listens on"
+  type        = number
+  default     = 80
 }
