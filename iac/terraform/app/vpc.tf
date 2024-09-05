@@ -3,27 +3,33 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
+locals {
+  availability_zones = slice(data.aws_availability_zones.available.names, 0, 2)
+  private_subnets_ecs = [
+    "10.0.1.0/24",
+    "10.0.2.0/24",
+  ]
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.13.0"
 
   cidr = "10.0.0.0/16"
-  azs  = slice(data.aws_availability_zones.available.names, 0, 2)
+  azs  = local.availability_zones
 
   create_igw         = true # Expose public subnetworks to the Internet
   enable_nat_gateway = true # Hide private subnetworks behind NAT Gateway
   single_nat_gateway = true
 
-  private_subnets = [
-    "10.0.1.0/24",
-    "10.0.2.0/24"
-  ]
+  private_subnets = local.private_subnets_ecs
 
   public_subnets = [
     "10.0.101.0/24",
     "10.0.102.0/24"
   ]
 }
+
 resource "aws_security_group_rule" "allow_outbound_https" {
   type              = "egress"
   from_port         = 443

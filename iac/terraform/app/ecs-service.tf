@@ -31,3 +31,12 @@ resource "aws_security_group_rule" "allow_alb_to_ecs" {
   source_security_group_id = module.alb.security_group_id
   security_group_id        = module.vpc.default_security_group_id
 }
+
+resource "aws_security_group_rule" "allow_ecs_to_rds" {
+  type                     = "ingress"
+  from_port                = var.database_port
+  to_port                  = var.database_port
+  protocol                 = "tcp"
+  source_security_group_id = module.vpc.default_security_group_id
+  security_group_id        = aws_security_group.database.id
+}

@@ -27,3 +27,35 @@ variable "container_port" {
   type        = number
   default     = 80
 }
+
+# RDS
+variable "database_name" {
+  description = "The name of the database"
+  type        = string
+  default     = null
+}
+
+variable "database_username" {
+  description = "The username for the database"
+  type        = string
+  default     = null
+}
+
+variable "database_password" {
+  description = "The password for the database"
+  type        = string
+  # sensitive   = true
+  default = "password" #TODO: REMOVE THIS LINE
+}
+
+variable "database_instance_class" {
+  description = "The instance class for the RDS instance"
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "database_port" {
+  description = "The port the database listens on"
+  type        = number
+  default     = 5432
+}
