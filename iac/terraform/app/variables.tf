@@ -28,6 +28,13 @@ variable "container_port" {
   default     = 80
 }
 
+#TODO: Implement "valueFrom" for AWS Secrets Manager
+variable "container_environment" {
+  description = "The environment variables to pass to the container"
+  type        = map(any)
+  default     = null
+}
+
 # RDS
 variable "database_name" {
   description = "The name of the database"

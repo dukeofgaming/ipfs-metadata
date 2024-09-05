@@ -1,11 +1,14 @@
 locals {
-  container_environment = {
-    "POSTGRES_HOST"     = aws_db_instance.database.endpoint
-    "POSTGRES_USER"     = local.database_username
-    "POSTGRES_DB"       = local.database_name
-    "POSTGRES_PASSWORD" = var.database_password
-    "POSTGRES_PORT"     = var.database_port
-  }
+  container_environment = coalesce(
+    var.container_environment,
+    {
+      "POSTGRES_HOST"     = aws_db_instance.database.endpoint
+      "POSTGRES_USER"     = local.database_username
+      "POSTGRES_DB"       = local.database_name
+      "POSTGRES_PASSWORD" = var.database_password
+      "POSTGRES_PORT"     = var.database_port
+    }
+  )
 }
 
 resource "aws_ecs_task_definition" "this" {
