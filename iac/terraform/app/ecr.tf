@@ -4,6 +4,9 @@ module "ecr" {
 
   repository_force_delete = true
   repository_name         = var.project
+
+  repository_image_tag_mutability = "MUTABLE"
+
   repository_lifecycle_policy = jsonencode({
     rules = [{
       action = {
