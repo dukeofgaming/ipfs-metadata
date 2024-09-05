@@ -16,8 +16,8 @@ module "alb" {
       type = "ingress"
 
       protocol  = "TCP"
-      from_port = var.container_port
-      to_port   = var.container_port
+      from_port = 80
+      to_port   = 80
 
       description = "Permit incoming HTTP requests from the internet"
 
@@ -44,7 +44,7 @@ module "alb" {
 
   http_tcp_listeners = [
     {
-      # Setup a listener on port 80 and forward all HTTP
+      # Setup a listener on container port and forward all HTTP
       # traffic to target_groups[0] below which
       # will point to our app.
       port               = 80

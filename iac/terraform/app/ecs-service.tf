@@ -16,7 +16,18 @@ resource "aws_ecs_service" "this" {
   }
 
   network_configuration {
-    security_groups = [module.vpc.default_security_group_id]
-    subnets         = module.vpc.private_subnets
+    security_groups = [
+      module.vpc.default_security_group_id
+    ]
+    subnets = module.vpc.private_subnets
   }
+}
+
+resource "aws_security_group_rule" "allow_alb_to_ecs" {
+  type                     = "ingress"
+  from_port                = var.container_port
+  to_port                  = var.container_port
+  protocol                 = "tcp"
+  source_security_group_id = module.alb.security_group_id
+  security_group_id        = module.vpc.default_security_group_id
 }
