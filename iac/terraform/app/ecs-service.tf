@@ -1,14 +1,26 @@
 resource "aws_ecs_service" "this" {
   cluster         = module.ecs.cluster_id
-  desired_count   = 1
+  desired_count   = 1             #TODO: Look at autoscaling
   launch_type     = "FARGATE"
   name            = "${var.project}-${local.environment}-ecs-service"
   task_definition = resource.aws_ecs_task_definition.this.arn
 
-  lifecycle {
-    ignore_changes = [desired_count] # Allow external changes to happen without Terraform conflicts, particularly around auto-scaling.
+  #TODO: Parameterize these
+  # Restart policy
+  health_check_grace_period_seconds   = 300 
+  deployment_minimum_healthy_percent  = 0
+  deployment_maximum_percent          = 100
+
+  deployment_controller {
+    type = "ECS"
   }
 
+  deployment_circuit_breaker {
+    enable   = false         # Enables the circuit breaker
+    rollback = false        # Automatically roll back on failure
+  }
+
+  # Networking
   load_balancer {
     container_name   = local.container_name
     container_port   = var.container_port
@@ -20,6 +32,10 @@ resource "aws_ecs_service" "this" {
       module.vpc.default_security_group_id
     ]
     subnets = module.vpc.private_subnets
+  }
+
+  lifecycle {
+    ignore_changes = [desired_count] # Allow external changes to happen without Terraform conflicts, particularly around auto-scaling.
   }
 }
 
