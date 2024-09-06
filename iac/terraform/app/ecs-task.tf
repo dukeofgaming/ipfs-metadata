@@ -35,35 +35,35 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode(
     [
       {
-        name      = local.container_name,
-        essential = true,
+        name      : local.container_name,
+        essential : true,
 
-        # cpu    = 256,
-        # memory = 512,
+        # cpu    : 256,
+        # memory : 512,
 
         # Container configuration
-        image     = var.container_image,
-        portMappings = [
+        image         : var.container_image,
+        portMappings  : [
           {
-            containerPort = var.container_port,
-            hostPort      = var.container_port
+            containerPort : var.container_port,
+            hostPort      : var.container_port
           }
         ],
 
         environment : toset([
           for key, value in local.container_environment : {
-            name  = key
-            value = value
+            name  : key
+            value : value
           }
         ]),
 
         # AWS Integrations
-        logConfiguration = {
-          logDriver = "awslogs",
-          options = {
-            awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name,
-            awslogs-region        = var.aws_region,
-            awslogs-stream-prefix = "ecs"
+        logConfiguration : {
+          logDriver       : "awslogs",
+          options         : {
+            awslogs-group         : aws_cloudwatch_log_group.ecs_log_group.name,
+            awslogs-region        : var.aws_region,
+            awslogs-stream-prefix : "ecs"
           }
         },
       }
