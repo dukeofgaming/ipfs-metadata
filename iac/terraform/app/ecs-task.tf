@@ -27,7 +27,7 @@ resource "aws_ecs_task_definition" "this" {
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   #TODO: See if task role is needed for RDS
 
-  # Network
+  # Networking
   network_mode             = "awsvpc"
 
   # Containers
@@ -70,6 +70,11 @@ resource "aws_ecs_task_definition" "this" {
     module.ecr,               # ECR needed before task definition
     aws_db_instance.database, # Database should exist before ECS task
   ]
+
+  tags = {
+    "Service" = "ECS"
+    "Name"    = "${var.project}-${local.environment}-ecs-task"
+  }
 }
 
 # CloudWatch Logs
