@@ -1,4 +1,6 @@
 locals {
+
+  # Environment overrides
   container_environment = coalesce(
     var.container_environment,
     {
@@ -12,20 +14,31 @@ locals {
 }
 
 resource "aws_ecs_task_definition" "this" {
+  
+  family = "family-of-${var.project}-${local.environment}-tasks"
+
+  # Resources
+  cpu    = 256
+  memory = 512
+
+  requires_compatibilities = ["FARGATE"]
+
+  # IAM
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  #TODO: See if task role is needed for RDS
+
+  # Network
+  network_mode             = "awsvpc"
+
+  # Containers
   container_definitions = jsonencode(
     [
       {
-        environment : toset([
-          for key, value in local.container_environment : {
-            name  = key
-            value = value
-          }
-        ]),
-
-        essential = true,
-        image     = var.container_image,
         name      = local.container_name,
+        essential = true,
 
+        # Container configuration
+        image     = var.container_image,
         portMappings = [
           {
             containerPort = var.container_port,
@@ -33,6 +46,14 @@ resource "aws_ecs_task_definition" "this" {
           }
         ],
 
+        environment : toset([
+          for key, value in local.container_environment : {
+            name  = key
+            value = value
+          }
+        ]),
+
+        # AWS Integrations
         logConfiguration = {
           logDriver = "awslogs",
           options = {
@@ -45,23 +66,14 @@ resource "aws_ecs_task_definition" "this" {
     ]
   )
 
-  cpu    = 256
-  memory = 512
-
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-
-  family = "family-of-${var.project}-${local.environment}-tasks"
-
-  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-
   depends_on = [
-    aws_db_instance.database,
-    module.ecr
+    module.ecr,               # ECR needed before task definition
+    aws_db_instance.database, # Database should exist before ECS task
   ]
 }
 
+# CloudWatch Logs
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/${var.project}-${local.environment}-logs"
-  retention_in_days = 7 # Set retention policy for log data
+  retention_in_days = 7
 }
