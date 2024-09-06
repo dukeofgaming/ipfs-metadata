@@ -2,46 +2,8 @@ module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 8.4.0"
 
+  # Load Balancing  
   load_balancer_type = "application"
-  security_groups = [
-    module.vpc.default_security_group_id
-  ]
-
-  subnets = module.vpc.public_subnets
-  vpc_id  = module.vpc.vpc_id
-
-  security_group_rules = {
-
-    ingress_all_http = {
-      type = "ingress"
-
-      protocol  = "TCP"
-      from_port = 80
-      to_port   = 80
-
-      description = "Permit incoming HTTP requests from the internet"
-
-      cidr_blocks = [
-        "0.0.0.0/0"
-      ]
-    }
-
-    egress_all = {
-      type = "egress"
-
-      protocol  = "-1"
-      from_port = 0
-      to_port   = 0
-
-      description = "Permit all outgoing requests to the internet"
-
-      cidr_blocks = [
-        "0.0.0.0/0"
-      ]
-    }
-
-  }
-
   http_tcp_listeners = [
     {
       # Setup a listener on container port and forward all HTTP
@@ -60,4 +22,41 @@ module "alb" {
       target_type      = "ip"
     }
   ]
+
+  # Networking
+  vpc_id  = module.vpc.vpc_id
+  subnets = module.vpc.public_subnets
+
+
+  # Security
+  security_groups = [
+    module.vpc.default_security_group_id
+  ]
+
+  security_group_rules = {
+    ingress_all_http = {
+      type = "ingress"
+      description = "Permit incoming HTTP requests from the internet"
+
+      protocol  = "TCP"
+      from_port = 80
+      to_port   = 80
+
+
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress_all = {
+      type = "egress"
+      description = "Permit all outgoing requests to the internet"
+
+      protocol  = "-1"
+      from_port = 0
+      to_port   = 0
+
+
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
 }
