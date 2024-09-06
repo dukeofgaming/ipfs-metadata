@@ -2,7 +2,6 @@ variable "aws_region" {
   description = "The AWS region to deploy the resources"
   type        = string
   default     = "us-east-2"
-
 }
 
 variable "project" {
@@ -49,10 +48,10 @@ variable "database_username" {
 }
 
 variable "database_password" {
-  description = "The password for the database"
+  description = "The master password for the database"
   type        = string
-  # sensitive   = true
-  default = "password" #TODO: REMOVE THIS LINE
+  #sensitive   = true        #TODO: UNCOMMENT THIS LINE
+  default     = "password"  #TODO: REMOVE THIS LINE
 }
 
 variable "database_instance_class" {

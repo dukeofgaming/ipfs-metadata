@@ -18,8 +18,8 @@ resource "aws_ecs_task_definition" "this" {
   family = "family-of-${var.project}-${local.environment}-tasks"
 
   # Resources
-  cpu    = 512
-  memory = 1024
+  cpu    = 256
+  memory = 512
 
   requires_compatibilities = ["FARGATE"]
 
@@ -37,9 +37,6 @@ resource "aws_ecs_task_definition" "this" {
       {
         name      : local.container_name,
         essential : true,
-
-        # cpu    : 256,
-        # memory : 512,
 
         # Container configuration
         image         : var.container_image,
@@ -82,7 +79,6 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 #TODO: Add network insights
-#TODO: Add health checks
 
 # CloudWatch Logs
 resource "aws_cloudwatch_log_group" "ecs_log_group" {

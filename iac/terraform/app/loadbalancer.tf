@@ -1,62 +1,94 @@
-module "alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 8.4.0"
 
-  # Load Balancing  
+resource "aws_lb" "alb" {
+  name               = var.project
+  internal           = false
   load_balancer_type = "application"
-  http_tcp_listeners = [
-    {
-      # Setup a listener on container port and forward all HTTP
-      # traffic to target_groups[0] below which
-      # will point to our app.
-      port               = 80
-      protocol           = "HTTP"
-      target_group_index = 0
-    }
+  
+  security_groups    = [
+    aws_security_group.alb_sg.id
   ]
+  
+  subnets            = module.vpc.public_subnets
+  
+  enable_deletion_protection = false
 
-  target_groups = [
-    {
-      backend_port     = var.container_port
-      backend_protocol = "HTTP"
-      target_type      = "ip"
-    }
-  ]
+  tags = {
+    "Service" = "ALB"
+    "Name"    = "${var.project}-${local.environment}-alb"
+  }
+}
 
-  # Networking
-  vpc_id  = module.vpc.vpc_id
-  subnets = module.vpc.public_subnets
+resource "aws_security_group" "alb_sg" {
+  description = "Allow all traffic to ALB"
+  vpc_id      = module.vpc.vpc_id
 
+  ingress {
+    description = "Allow all TCP traffic in on port 8 from the internet"
 
-  # Security
-  security_groups = [
-    module.vpc.default_security_group_id
-  ]
-
-  security_group_rules = {
-    ingress_all_http = {
-      type = "ingress"
-      description = "Permit incoming HTTP requests from the internet"
-
-      protocol  = "TCP"
-      from_port = 80
-      to_port   = 80
-
-
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    egress_all = {
-      type = "egress"
-      description = "Permit all outgoing requests to the internet"
-
-      protocol  = "-1"
-      from_port = 0
-      to_port   = 0
-
-
-      cidr_blocks = ["0.0.0.0/0"]
-    }
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
+  egress {
+    description = "Allow all traffic out"
+
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    "Service" = "ALB"
+    "Name"    = "${var.project}-${local.environment}-alb-sg"
+  }
+}
+
+resource "aws_lb_target_group" "app" {
+  name     = var.project
+  
+  vpc_id   = module.vpc.vpc_id
+  target_type = "ip"
+  
+  protocol = "HTTP"
+  port     = var.container_port
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    matcher             = "200-302"
+  }
+
+  depends_on = [
+    aws_lb.alb
+  ]
+
+  tags = {
+    "Service" = "ALB"
+    "Name"    = "${var.project}-${local.environment}-target-group"
+  }
+}
+
+resource "aws_lb_listener" "frontend" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app.arn
+  }
 }

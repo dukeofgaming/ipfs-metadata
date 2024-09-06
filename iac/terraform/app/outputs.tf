@@ -1,5 +1,5 @@
 output "lb_url" {
-  value = "http://${module.alb.lb_dns_name}"
+  value = "http://${aws_lb.alb.dns_name}"
 }
 
 output "database" {

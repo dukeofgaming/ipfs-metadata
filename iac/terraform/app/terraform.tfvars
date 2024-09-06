@@ -5,8 +5,8 @@ project = "nft-ipfs-metadata"
 # container_image = "nginx:1.27-alpine"
 
 ## Images to test Postgres connectivity
-container_image                 = "dpage/pgadmin4:8.10"
-# container_image                 = "dpage/pgadmin4:8.11.0"
+# container_image                 = "dpage/pgadmin4:8.10"
+container_image                 = "dpage/pgadmin4:8.11.0"
 # container_port = 80
 container_environment     = {
     "PGADMIN_DEFAULT_EMAIL"     = "theadmin@noreply.com",
@@ -18,4 +18,4 @@ container_environment     = {
 # # container_image = "371941937463.dkr.ecr.us-east-2.amazonaws.com/nft-ipfs-metadata:c74c8e4"
 # container_port = 8080
 
-database_name = "nft_ipfs_metadata"
+database_name = "nftipfsmetadata"

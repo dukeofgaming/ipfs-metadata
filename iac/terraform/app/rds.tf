@@ -7,13 +7,13 @@ resource "random_id" "random_database_suffix" {
 locals {
   database_base_name = coalesce(
     var.database_name,
-    replace(var.project, "-", "")
+    replace(var.project, "-", "_")
   )
   database_name = "${var.database_name}_${random_id.random_database_suffix.hex}"
 
   database_username = coalesce(
     var.database_username,
-    replace(var.project, "-", "")
+    replace(var.project, "-", "_")
   )
 }
 
@@ -37,9 +37,10 @@ resource "aws_db_instance" "database" {
   ]
   db_subnet_group_name = aws_db_subnet_group.default.name
 
-  # Monitoring
+  # Backup
   backup_retention_period = 7
-  #   monitoring_interval     = 60
+
+  #TODO: Decide on monitoring
 
   enabled_cloudwatch_logs_exports = [
     "postgresql",
@@ -54,6 +55,9 @@ locals {
   ]
 }
 
+# Networking
+#TODO: Add network insights
+
 resource "aws_subnet" "private_subnets_rds" {
   count = length(local.private_subnets_rds)
 
@@ -67,6 +71,11 @@ resource "aws_subnet" "private_subnets_rds" {
   }
 }
 
+resource "aws_db_subnet_group" "default" {
+  name       = "${var.project}-${local.environment}-subnet-group"
+  subnet_ids = aws_subnet.private_subnets_rds[*].id
+}
+
 resource "aws_security_group" "database" {
   name        = "${var.project}-${local.environment}-rds-sg"
   description = "Allow ECS tasks access to Postgres"
@@ -74,11 +83,13 @@ resource "aws_security_group" "database" {
   vpc_id = module.vpc.vpc_id
 
   ingress {
-    from_port = var.database_port
-    to_port   = var.database_port
-    protocol  = "tcp"
-    cidr_blocks = [
-      module.vpc.vpc_cidr_block
+    from_port   = var.database_port
+    to_port     = var.database_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+
+    security_groups = [
+      aws_security_group.ecs.id
     ]
   }
 
@@ -88,9 +99,8 @@ resource "aws_security_group" "database" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  tags = {
+    "Service" = "RDS"
+  }
 }
 
-resource "aws_db_subnet_group" "default" {
-  name       = "${var.project}-${local.environment}-subnet-group"
-  subnet_ids = aws_subnet.private_subnets_rds[*].id
-}
