@@ -18,14 +18,15 @@ resource "aws_ecs_task_definition" "this" {
   family = "family-of-${var.project}-${local.environment}-tasks"
 
   # Resources
-  cpu    = 256
-  memory = 512
+  cpu    = 512
+  memory = 1024
 
   requires_compatibilities = ["FARGATE"]
 
   # IAM
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   #TODO: See if task role is needed for RDS
+
 
   # Networking
   network_mode             = "awsvpc"
@@ -36,6 +37,9 @@ resource "aws_ecs_task_definition" "this" {
       {
         name      = local.container_name,
         essential = true,
+
+        # cpu    = 256,
+        # memory = 512,
 
         # Container configuration
         image     = var.container_image,
@@ -76,6 +80,9 @@ resource "aws_ecs_task_definition" "this" {
     "Name"    = "${var.project}-${local.environment}-ecs-task"
   }
 }
+
+#TODO: Add network insights
+#TODO: Add health checks
 
 # CloudWatch Logs
 resource "aws_cloudwatch_log_group" "ecs_log_group" {

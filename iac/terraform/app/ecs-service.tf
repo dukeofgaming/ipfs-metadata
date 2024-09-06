@@ -8,7 +8,7 @@ resource "aws_ecs_service" "this" {
   #TODO: Parameterize these
   # Restart policy
   health_check_grace_period_seconds   = 300 
-  deployment_minimum_healthy_percent  = 0
+  deployment_minimum_healthy_percent  = 50
   deployment_maximum_percent          = 100
 
   deployment_controller {
@@ -16,8 +16,8 @@ resource "aws_ecs_service" "this" {
   }
 
   deployment_circuit_breaker {
-    enable   = false         # Enables the circuit breaker
-    rollback = false        # Automatically roll back on failure
+    enable   = true         # Enables the circuit breaker
+    rollback = true        # Automatically roll back on failure
   }
 
   # Networking
