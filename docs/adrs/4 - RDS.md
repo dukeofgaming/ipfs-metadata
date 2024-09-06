@@ -7,10 +7,11 @@ The project requires a Postgres database for the container. The options are RDS 
 ## Decision
 Use AWS RDS for the Postgres database instead of an additional task or sidecar Postgres container.
 
-The main rationale is reducing the overhead of managing database operations, including backups and disaster recovery.
-
 ## Consequences
 
-1. ...
+1. The database is managed by AWS, reducing the overhead of managing database operations.
+2. Simpler to manage backups and disaster recovery.
+3. The database is setup along with the rest of the app infrastructure making it possible to have a running system with minimal setup.
+
 
 
