@@ -34,6 +34,14 @@ variable "container_environment" {
   default     = null
 }
 
+variable "ecs_circuit_breaker" {
+  description = "Enable circuit breaker for ECS service"
+  type        = object({
+    enable   : optional(bool, true)
+    rollback  : optional(bool, true)
+  })
+}
+
 # RDS
 variable "database_name" {
   description = "The name of the database"

@@ -5,6 +5,16 @@ resource "aws_ecs_service" "this" {
   name            = "${var.project}-${local.environment}-ecs-service"
   task_definition = resource.aws_ecs_task_definition.this.arn
 
+  # Deployment
+  deployment_controller {
+    type = "ECS"
+  }
+
+  deployment_circuit_breaker {
+    enable   = var.ecs_circuit_breaker.enable
+    rollback = var.ecs_circuit_breaker.rollback
+  }
+
   # Networking
   load_balancer {
     container_name   = local.container_name
