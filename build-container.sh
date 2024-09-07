@@ -50,6 +50,10 @@ parse_arguments() {
             -p | --push)
                 push_enabled=true
                 ;;
+            -h | --help)
+                usage
+                exit 0
+                ;;
             *)
                 echo "Unknown argument: $1"
                 exit 1
@@ -138,6 +142,22 @@ print_debug_info() {
     echo "Architecture: $architecture"
     echo "Push Enabled: $push_enabled"
     echo "=============================="
+}
+
+# Function to display usage information
+usage() {
+    echo "Usage: $0 [OPTIONS]
+
+    Options:
+      -n, --name             Set the image name
+      -r, --registry-ecr     Set the ECR registry URL
+      -v, --version          Set the image version
+      -c, --commit           Use the current git commit hash as a tag
+      -t, --timestamp        Use the current timestamp as a tag
+      -a, --architecture     Set the build architecture (default: linux/amd64)
+      -p, --push             Enable pushing the image to the registry
+      -h, --help             Display this help message and exit
+    "
 }
 
 # Main function to run the script logic
