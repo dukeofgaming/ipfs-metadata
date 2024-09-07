@@ -13,7 +13,7 @@ resource "aws_lb" "alb" {
   enable_deletion_protection = false
 
   tags = {
-    "Service" = "ALB"
+    "Service" = "ECS"
     "Name"    = "${var.project}-${local.environment}-alb"
   }
 }
@@ -23,7 +23,7 @@ resource "aws_security_group" "alb_sg" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    description = "Allow all TCP traffic in on port 8 from the internet"
+    description = "Allow all TCP traffic in through port 80 from the internet"
 
     from_port   = 80
     to_port     = 80
@@ -40,15 +40,24 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  
-
   lifecycle {
     create_before_destroy = true
   }
 
   tags = {
-    "Service" = "ALB"
+    "Service" = "ECS"
     "Name"    = "${var.project}-${local.environment}-alb-sg"
+  }
+}
+
+resource "aws_lb_listener" "frontend" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app.arn
   }
 }
 
@@ -77,18 +86,7 @@ resource "aws_lb_target_group" "app" {
   ]
 
   tags = {
-    "Service" = "ALB"
+    "Service" = "ECS"
     "Name"    = "${var.project}-${local.environment}-target-group"
-  }
-}
-
-resource "aws_lb_listener" "frontend" {
-  load_balancer_arn = aws_lb.alb.arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.app.arn
   }
 }

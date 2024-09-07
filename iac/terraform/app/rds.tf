@@ -5,15 +5,15 @@ resource "random_id" "random_database_suffix" {
 }
 
 locals {
-  database_base_name = coalesce(
+  database_base_name = coalesce(    # Use the provided database name or the project name
     var.database_name,
-    replace(var.project, "-", "_")
+    replace(var.project, "-", "_")  # Replace hyphens in project name with underscores to make valid for PostgreSQL
   )
   database_name = "${var.database_name}_${random_id.random_database_suffix.hex}"
 
-  database_username = coalesce(
+  database_username = coalesce(     # Use the provided database username or the project name
     var.database_username,
-    replace(var.project, "-", "_")
+    replace(var.project, "-", "_")  # Replace hyphens in project name with underscores to make valid for PostgreSQL
   )
 }
 

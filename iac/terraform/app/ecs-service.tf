@@ -37,8 +37,9 @@ resource "aws_ecs_service" "this" {
 }
 
 #Networking & Security
-
+# TODO: Refactor to ingress / egress rules
 resource "aws_security_group" "ecs" {
+  # name = "${var.project}-${local.environment}-ecs-sg"
   description = "Allow all traffic to ECS tasks"
 
   vpc_id = module.vpc.vpc_id
