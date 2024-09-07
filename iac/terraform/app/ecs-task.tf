@@ -80,8 +80,6 @@ resource "aws_ecs_task_definition" "this" {
   }
 }
 
-#TODO: Add network insights
-
 # CloudWatch Logs
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/${var.project}-${local.environment}-logs"
