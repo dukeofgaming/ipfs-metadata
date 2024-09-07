@@ -1,15 +1,15 @@
-locals{
-    tags = merge(
-        var.tags,
-        {
-            "project" = var.project_name
-        }
-    )
+locals {
+  tags = merge(
+    var.tags,
+    {
+      "project" = var.project_name
+    }
+  )
 }
 
 provider "aws" {
-    region          = var.region
-    default_tags {
-        tags = local.tags
-    }
+  region = var.region
+  default_tags {
+    tags = local.tags
+  }
 }
