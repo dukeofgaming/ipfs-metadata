@@ -7,7 +7,7 @@
 #   service_name          = "com.amazonaws.${var.aws_region}.ecs"
 #   security_group_ids    = [aws_security_group.ecs.id]
 #   subnet_ids            = module.vpc.private_subnets
-  
+
 # }
 
 data "aws_ami" "amazon_arm64" {
@@ -35,12 +35,12 @@ resource "aws_instance" "ecs_network_insights_destinations" {
 
 resource "aws_ec2_network_insights_path" "igw_to_ecs_subnets" {
   count = length(aws_instance.ecs_network_insights_destinations)
-  
+
   source = module.vpc.igw_id
 
   protocol = "tcp"
-#   destination = aws_vpc_endpoint.ecs_network_insights_destination.id
-  destination = aws_instance.ecs_network_insights_destinations[count.index].id
+  #   destination = aws_vpc_endpoint.ecs_network_insights_destination.id
+  destination      = aws_instance.ecs_network_insights_destinations[count.index].id
   destination_port = var.container_port
 
   tags = {
@@ -62,7 +62,7 @@ resource "aws_ec2_network_insights_analysis" "igw_to_ecs_subnets" {
     "NetworkInsights" = "ECS"
   }
 
-  depends_on = [ 
+  depends_on = [
     aws_ecs_task_definition.this
   ]
 }

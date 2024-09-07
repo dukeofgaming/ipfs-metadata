@@ -5,15 +5,15 @@ resource "random_id" "random_database_suffix" {
 }
 
 locals {
-  database_base_name = coalesce(    # Use the provided database name or the project name
+  database_base_name = coalesce( # Use the provided database name or the project name
     var.database_name,
-    replace(var.project, "-", "_")  # Replace hyphens in project name with underscores to make valid for PostgreSQL
+    replace(var.project, "-", "_") # Replace hyphens in project name with underscores to make valid for PostgreSQL
   )
   database_name = "${var.database_name}_${random_id.random_database_suffix.hex}"
 
-  database_username = coalesce(     # Use the provided database username or the project name
+  database_username = coalesce( # Use the provided database username or the project name
     var.database_username,
-    replace(var.project, "-", "_")  # Replace hyphens in project name with underscores to make valid for PostgreSQL
+    replace(var.project, "-", "_") # Replace hyphens in project name with underscores to make valid for PostgreSQL
   )
 }
 
@@ -25,8 +25,8 @@ resource "aws_db_instance" "database" {
   engine_version    = "16.4"
   allocated_storage = 20
   db_name           = local.database_name
-  username = local.database_username
-  password = var.database_password
+  username          = local.database_username
+  password          = var.database_password
 
   #publicly_accessible    = false
   skip_final_snapshot = true
@@ -64,7 +64,7 @@ locals {
 
 resource "aws_db_parameter_group" "this" {
   name   = "${local.environment}-rds-parameter-group"
-  family = "postgres16"  # Adjust this to your version of PostgreSQL
+  family = "postgres16" # Adjust this to your version of PostgreSQL
 
   # Disable SSL enforcement
   parameter {

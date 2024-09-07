@@ -3,13 +3,13 @@ resource "aws_lb" "alb" {
   name               = var.project
   internal           = false
   load_balancer_type = "application"
-  
-  security_groups    = [
+
+  security_groups = [
     aws_security_group.alb_sg.id
   ]
-  
-  subnets            = module.vpc.public_subnets
-  
+
+  subnets = module.vpc.public_subnets
+
   enable_deletion_protection = false
 
   tags = {
@@ -62,11 +62,11 @@ resource "aws_lb_listener" "frontend" {
 }
 
 resource "aws_lb_target_group" "app" {
-  name     = var.project
-  
-  vpc_id   = module.vpc.vpc_id
+  name = var.project
+
+  vpc_id      = module.vpc.vpc_id
   target_type = "ip"
-  
+
   protocol = "HTTP"
   port     = var.container_port
 

@@ -24,7 +24,7 @@ resource "aws_ecs_service" "this" {
 
   # Load Balancer
   network_configuration {
-    subnets         = module.vpc.private_subnets
+    subnets = module.vpc.private_subnets
     security_groups = [
       aws_security_group.ecs.id
     ]

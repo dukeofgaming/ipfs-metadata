@@ -16,7 +16,7 @@ locals {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  
+
   family = "family-of-${var.project}-${local.environment}-tasks"
 
   # Resources
@@ -31,37 +31,37 @@ resource "aws_ecs_task_definition" "this" {
 
 
   # Networking
-  network_mode             = "awsvpc"
+  network_mode = "awsvpc"
 
   # Containers
   container_definitions = jsonencode(
     [
       {
-        name      : local.container_name,
+        name : local.container_name,
         essential : true,
 
         # Container configuration
-        image         : var.container_image,
-        portMappings  : [
+        image : var.container_image,
+        portMappings : [
           {
             containerPort : var.container_port,
-            hostPort      : var.container_port
+            hostPort : var.container_port
           }
         ],
 
         environment : toset([
           for key, value in local.container_environment : {
-            name  : key
+            name : key
             value : value
           }
         ]),
 
         # AWS Integrations
         logConfiguration : {
-          logDriver       : "awslogs",
-          options         : {
-            awslogs-group         : aws_cloudwatch_log_group.ecs_log_group.name,
-            awslogs-region        : var.aws_region,
+          logDriver : "awslogs",
+          options : {
+            awslogs-group : aws_cloudwatch_log_group.ecs_log_group.name,
+            awslogs-region : var.aws_region,
             awslogs-stream-prefix : "ecs"
           }
         },

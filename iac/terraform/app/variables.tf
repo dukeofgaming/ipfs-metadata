@@ -36,9 +36,9 @@ variable "container_environment" {
 
 variable "ecs_circuit_breaker" {
   description = "Enable circuit breaker for ECS service"
-  type        = object({
-    enable   : optional(bool, true)
-    rollback  : optional(bool, true)
+  type = object({
+    enable : optional(bool, true)
+    rollback : optional(bool, true)
   })
 }
 
@@ -59,7 +59,7 @@ variable "database_password" {
   description = "The master password for the database"
   type        = string
   #sensitive   = true        #TODO: UNCOMMENT THIS LINE
-  default     = "password"  #TODO: REMOVE THIS LINE
+  default = "password" #TODO: REMOVE THIS LINE
 }
 
 variable "database_instance_class" {
