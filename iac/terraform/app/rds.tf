@@ -46,6 +46,13 @@ resource "aws_db_instance" "database" {
     "postgresql",
     "upgrade",
   ]
+
+  # Parameters
+  parameter_group_name = aws_db_parameter_group.this.name
+
+  tags = {
+    "Service" = "RDS"
+  }
 }
 
 locals {
@@ -55,9 +62,22 @@ locals {
   ]
 }
 
-# Networking
-#TODO: Add network insights
+resource "aws_db_parameter_group" "this" {
+  name   = "${local.environment}-rds-parameter-group"
+  family = "postgres16"  # Adjust this to your version of PostgreSQL
 
+  # Disable SSL enforcement
+  parameter {
+    name  = "rds.force_ssl"
+    value = "0"
+  }
+
+  tags = {
+    "Service" = "RDS"
+  }
+}
+
+# Networking
 resource "aws_subnet" "private_subnets_rds" {
   count = length(local.private_subnets_rds)
 
