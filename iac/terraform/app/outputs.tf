@@ -9,7 +9,3 @@ output "database" {
     username      = aws_db_instance.database.username
   }
 }
-
-output "ecr" {
-  value = module.ecr.repository_url
-}

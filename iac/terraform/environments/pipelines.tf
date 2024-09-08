@@ -3,6 +3,8 @@ module "pipelines" {
 
   source    = "../modules/pipeline"
 
+  ecr_repository_name = "${var.project_name}-${each.value.environment}"
+
   environment   = each.value.environment
   branch        = each.value.branch
 

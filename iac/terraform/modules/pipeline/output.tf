@@ -9,6 +9,10 @@ output "pipeline_aws_iam_user" {
   value = data.aws_iam_user.this
 }
 
+output "ecr_repository_url" {
+  value = module.ecr.repository_url
+}
+
 
 output "pipeline_environment" {
   description   = "The GitHub environment for the pipeline"

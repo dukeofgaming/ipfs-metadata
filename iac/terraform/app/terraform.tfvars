@@ -14,8 +14,8 @@ project = "nft-ipfs-metadata"
 #     "PGADMIN_LISTEN_PORT"       = 80,
 # }
 
-# container_image = "371941937463.dkr.ecr.us-east-2.amazonaws.com/nft-ipfs-metadata:latest"
-container_image = "371941937463.dkr.ecr.us-east-2.amazonaws.com/nft-ipfs-metadata:2024-09-07-19-26-13"
+# container_image = "371941937463.dkr.ecr.us-east-2.amazonaws.com/nft-ipfs-metadata-dev:latest"
+container_image = "371941937463.dkr.ecr.us-east-2.amazonaws.com/nft-ipfs-metadata-dev:c20391b"
 container_port  = 8080
 
 database_name = "nftipfsmetadata"

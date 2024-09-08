@@ -28,6 +28,7 @@ data "aws_region" "current" {}
 locals {
     environment_variables = {
         AWS_REGION     = data.aws_region.current.name
+        ECR_URL        = module.ecr.repository_url
     }
 }
 

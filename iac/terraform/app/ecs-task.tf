@@ -70,7 +70,6 @@ resource "aws_ecs_task_definition" "this" {
   )
 
   depends_on = [
-    module.ecr,               # ECR needed before task definition
     aws_db_instance.database, # Database should exist before ECS task
   ]
 

@@ -3,7 +3,7 @@ module "ecr" {
   version = "~> 2.2.1"
 
   repository_force_delete = true
-  repository_name         = var.project
+  repository_name         = var.ecr_repository_name
 
   repository_image_tag_mutability = "MUTABLE"
 
