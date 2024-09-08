@@ -10,11 +10,11 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   statement {
     actions = [
       "iam:GetRole",
-      "iam:ListRolePolicies"
+      "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies",
     ]
     resources = ["*"]
     effect    = "Allow"
-    
   }
 
   # EC2 permissions
@@ -23,7 +23,11 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeImages",
       "ec2:DescribeAvailabilityZones",
       "ec2:DescribeVpcs",
-      "ec2:DescribeVpcAttribute"
+      "ec2:DescribeVpcAttribute",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",       
+      "ec2:DescribeNetworkAcls",   
+      "ec2:DescribeRouteTables",    
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -42,7 +46,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   statement {
     actions = [
       "logs:DescribeLogGroups",
-      "logs:ListTagsForResource"
+      "logs:ListTagsForResource",
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -52,7 +56,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   statement {
     actions = [
       "rds:DescribeDBParameterGroups",
-      "rds:DescribeDBParameters"
+      "rds:DescribeDBParameters",
+      "rds:ListTagsForResource",
     ]
     resources = ["*"]
     effect    = "Allow"
