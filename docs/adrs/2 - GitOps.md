@@ -1,5 +1,5 @@
 ## Status
-Proposed
+Accepted
 
 ## Context
 The project's requirements include best practices for infrastructure, Terraform and AWS as well as optimized workflows. 
@@ -16,33 +16,160 @@ The assumptions are that:
 
 ## Decision
 
-Adopt GitOps for infrastructure environment management, deployments and promotion using a simple implementation that can scale with the project. 
+Adopt GitOps with GitHub for infrastructure environment management, deployments and promotion using a simple implementation that can scale with the project. 
 
-In order to maintain fully automated deployments, the Terraform state backend and service accounts will be provisioned separately.
 
 ```mermaid
-graph LR
+graph 
     subgraph "Environments"
-        CoreState
-        CoreState --> DevState
-        CoreState --> ProdState
+        
+
+
+        subgraph Core
+            CoreTerraformState[(tfstate)]
+            Pipelines
+        end
+
+        subgraph App
+        
+            subgraph Dev
+                DevTerraformState[(tfstate)] 
+            end
+
+
+            subgraph Prod
+                ProdTerraformState[(tfstate)]
+            end
+        end
+
+        
+        CoreTerraformState --creates--> DevTerraformState
+        CoreTerraformState --creates--> ProdTerraformState
+
+        
+
     end
 
-    subgraph "Apps"
-        DevApp
-        ProdApp
+```
+
+In order to maintain fully automated deployments, a `Core` infrastructure project/environment will provision:
+
+- Environments (e.g. Dev, Prod)
+- State Backends (i.e. tfstate)
+- User and service IAM accounts (e.g. GitHub)
+- Pipelines and their Container Registry (i.e. GitHub Environments, Secrets, Variables)
+
+
+Meanwhile the `App` infrastructure project will provision and be under GitHub's deployment automation:
+
+- Application
+- Database 
+- Networking
+- IAM
+
+
+```mermaid
+graph 
+    subgraph "Environments"
+
+        subgraph Core
+
+            CoreTerraformState[(tfstate)]
+            
+            subgraph Pipelines
+                subgraph ProdPipeline
+                    ProdCICD([Github Environment])
+                    ProdECR[(ECR)]
+                end
+            end
+        end
+
+        subgraph App
+           
+
+            subgraph Prod
+                ProdTerraformState[(tfstate)]
+                
+                ProdECS(ECS) <--read/write--> ProdRDS[(RDS)]
+                
+                
+                ProdTerraformState --creates--> ProdECS
+                ProdTerraformState --creates--> ProdRDS
+
+
+                
+            end
+        
+        end
+
+        ProdCICD --pushes--> ProdECR
+        ProdCICD --controls--> ProdTerraformState
+
+        CoreTerraformState --creates--> ProdTerraformState
+        ProdECS --pulls--> ProdECR
+
+        CoreTerraformState --creates--> ProdPipeline
+
     end
 
-    DevState --> DevApp
-    ProdState --> ProdApp
+```
+
+Finally, with these concepts put together, we can see how the environments are managed and promoted:
+
+```mermaid
+graph RL
+    subgraph "Environments"
+
+        
+        
+        subgraph Core
+            subgraph Pipelines
+                ProdPipeline
+                DevPipeline
+                
+                DevPipeline--PR promotes to -->ProdPipeline
+            end
+        end
+
+        subgraph App
+           
+
+            Dev
+            
+            Prod
+        
+        end
+
+        DevPipeline([Dev Github Environment])--deploys-->Dev
+        ProdPipeline([Prod Github Environment])--deploys-->Prod
+
+    end
+
+```
+
+The promoetion from `dev` to `prod` will be handled by a simple merge, where there is a branch for each environment:
+
+```mermaid
+gitGraph 
+
+    commit
+
+    branch dev
+    checkout dev
+    commit
+    commit tag: "dev-deploy"
+
+    checkout main
+    merge dev tag: "prod-deploy"
+
 ```
 
 
 ## Consequences
 
-1. The core state for environments and separate user/service accounts can be provisioned by the "environments" Terraform project. 
+1. The `core` state for `environments` and separate user/service accounts can be provisioned by the "environments" Terraform project. 
 2. The app Terraform project can be used securely with isolated service accounts.
 3. Only the "environment" Terraform project needs a root/privileged account.
-4. Only access keys need to be supplied with human intervention.
+4. No human intervention needed to supply AWS access keys.
 5. Opens the possibility for branch-based deployments for the dev environment e.g. with Terraform Workspaces (should not be used for major environments like  staging or production).
 
