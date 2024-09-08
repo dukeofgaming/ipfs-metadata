@@ -1,5 +1,15 @@
-docs/
+# Workspace
+.obsidian
+.env.dist
+.gitignore
 
+# Documentation
+docs/
+TODO.md
+
+# Docker
 docker-compose.yml
 Dockerfile
-TODO.md
+
+#Scripts
+build-container.sh
