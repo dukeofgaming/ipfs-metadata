@@ -1,42 +1,60 @@
-name: Container Build
+name: Hello World Workflow
 
-on:
+on: 
   push:
     branches:
       - main
-      - dev
 
 jobs:
-  build:
+  hello_world_job:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+      - name: Say Hello World
+        run: echo "Hello, World!"
 
-      # - name: Login to ECR
-      #   run: aws ecr get-login-password \
-      #         --region ${{ secrets.AWS_REGION }} | \
-      #           docker login \
-      #           --username AWS \
-      #           --password-stdin \
-      #             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+# name: Container Build
 
-      - name: Build and push Docker image
-        run: |
-          chmod +x ./build-container.sh
+# on:
+#   push:
+#     branches:
+#       - main
+#       - dev
 
-          ./build-container.sh \
-            --registry-ecr ${{ vars.ECR_URL }} \
-            --timestamp \
-            --commit \
-            --date \
-            --push
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v2
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ vars.AWS_REGION }}
+
+#       # - name: Login to ECR
+#       #   run: aws ecr get-login-password \
+#       #         --region ${{ secrets.AWS_REGION }} | \
+#       #           docker login \
+#       #           --username AWS \
+#       #           --password-stdin \
+#       #             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+#       - name: Build and push Docker image
+#         run: |
+#           chmod +x ./build-container.sh
+
+#           ./build-container.sh \
+#             --registry-ecr ${{ vars.ECR_URL }} \
+#             --timestamp \
+#             --commit \
+#             --date \
+#             --push
 
       
