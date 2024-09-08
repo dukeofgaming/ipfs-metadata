@@ -4,7 +4,7 @@ terraform {
       source  = "hashicorp/aws"
       version = "5.65.0"
     }
-    
+
     github = {
       source  = "integrations/github"
       version = "~> 6.2.3"
@@ -23,8 +23,8 @@ terraform {
 
 locals {
   create_pipeline_account = tomap({
-    for pipeline in var.pipelines: 
-      pipeline.environment => pipeline.aws_iam_user.name == null ? true : false
+    for pipeline in var.pipelines :
+    pipeline.environment => pipeline.aws_iam_user.name == null ? true : false
   })
 }
 
@@ -38,13 +38,13 @@ module "environments" {
 
   project_name     = var.project_name
   environment_name = each.value
-  
+
   accounts = setunion(
-    lookup(var.environment_accounts, each.value, []), 
+    lookup(var.environment_accounts, each.value, []),
     lookup(
-      local.create_pipeline_account, 
-      each.value, 
-      false       # Only not found if there is a core environment, no pipeline is created for this
+      local.create_pipeline_account,
+      each.value,
+      false # Only not found if there is a core environment, no pipeline is created for this
     ) ? ["pipeline"] : []
   )
 

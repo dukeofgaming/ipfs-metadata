@@ -3,33 +3,33 @@
 output "environments" {
   description = "The list of environments"
   value = {
-    for environment in module.environments : 
-      environment.name => {
-        name        : environment.name
+    for environment in module.environments :
+    environment.name => {
+      name : environment.name
 
-        s3_backend  : {
-          bucket      : environment.s3_backend.bucket.id
-          lock_table  : environment.s3_backend.lock_table.id
+      s3_backend : {
+        bucket : environment.s3_backend.bucket.id
+        lock_table : environment.s3_backend.lock_table.id
+      }
+
+      accounts : {
+        for account_alias, account in environment.accounts :
+
+        account_alias => {
+          id : account.id
+          unique_id : account.unique_id
+          arn : account.arn
+          name : account.name
+          path : account.path
         }
-
-        accounts    : {
-          for account_alias, account in environment.accounts: 
-          
-          account_alias => {
-            id        : account.id
-            unique_id : account.unique_id
-            arn       : account.arn
-            name      : account.name
-            path      : account.path
-          }
-        }  
-      } 
+      }
     }
+  }
 }
 
 # Managed pipeline configuration
 output "pipelines" {
-  description   = "The list of pipeline accounts"
-  value         = module.pipelines
-  sensitive     = false
+  description = "The list of pipeline accounts"
+  value       = module.pipelines
+  sensitive   = false
 }

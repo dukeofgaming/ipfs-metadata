@@ -18,7 +18,7 @@ variable "environments" {
 variable "environment_accounts" {
   description = "Map of environment names to sets of AWS accounts"
 
-  type = map(      
+  type = map(
     set(string)
   )
 
@@ -30,16 +30,16 @@ variable "environment_accounts" {
 
 variable "pipelines" {
   description = "The list of pipelines to deploy"
-  type        = map(
+  type = map(
     object({
-      environment             : string
-      branch                  : string
+      environment : string
+      branch : string
 
       # Pipeline must have an account, if none is supplied, one will be created
-      aws_iam_user  : optional(object({
+      aws_iam_user : optional(object({
         name : optional(string)
         path : optional(string, "/")
-      }), {})  
+      }), {})
 
     })
   )
