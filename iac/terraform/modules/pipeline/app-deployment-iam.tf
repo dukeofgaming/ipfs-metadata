@@ -6,22 +6,53 @@ resource "aws_iam_policy" "pipeline_permissions" {
 }
 
 data "aws_iam_policy_document" "pipeline_permissions" {
+  # IAM permissions
   statement {
     actions = [
-        # IAM
-        "iam:GetRole",
+      "iam:GetRole",
+      "iam:ListRolePolicies"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+    
+  }
 
-        # ECS
-        "ecs:DescribeClusters",
-        "ec2:DescribeImages",
-        "logs:DescribeLogGroups",
-        
-        # RDS
-        "rds:DescribeDBParameterGroups",
+  # EC2 permissions
+  statement {
+    actions = [
+      "ec2:DescribeImages",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeVpcAttribute"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
 
-        # Networking
-        "ec2:DescribeAvailabilityZones",
-        "ec2:DescribeVpcs"
+  # ECS permissions
+  statement {
+    actions = [
+      "ecs:DescribeClusters"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+
+  # CloudWatch Logs permissions
+  statement {
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:ListTagsForResource"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+
+  # RDS permissions
+  statement {
+    actions = [
+      "rds:DescribeDBParameterGroups",
+      "rds:DescribeDBParameters"
     ]
     resources = ["*"]
     effect    = "Allow"
