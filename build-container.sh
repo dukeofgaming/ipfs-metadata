@@ -1,12 +1,13 @@
 #!/bin/sh
 
 build_context="."
-version=""    # Default to empty, meaning no version
-commit=""     # Default to empty, meaning no commit
-timestamp=""  # Default to empty, but will get Unix timestamp when -t is used
+version=""                  # Default to empty, meaning no version
+commit=""                   # Default to ezmpty, meaning no commit
+timestamp=""                # Default to empty, but will get Unix timestamp when -t is used
+date=""                     # Default to empty, but will get current date and time when -d is used
 architecture="linux/amd64"  # Default to linux/amd64
-push_enabled=false  # Default to false for pushing images
-docker_command=""  # Variable to store the Docker build command globally
+push_enabled=false          # Default to false for pushing images
+docker_command=""           # Variable to store the Docker build command globally
 
 # Function to extract the last segment of the ECR registry URL
 get_last_segment() {
@@ -50,6 +51,9 @@ parse_arguments() {
             -p | --push)
                 push_enabled=true
                 ;;
+            -d | --date)
+                date=$(date +%Y-%m-%d-%H-%M-%S)  # Get current date and time in specified format
+                ;;
             -h | --help)
                 usage
                 exit 0
@@ -83,6 +87,9 @@ add_tags() {
 
     # If a timestamp is provided, add a timestamp tag
     [ "$timestamp" != "" ] && tags="$tags -t ${name}:${timestamp}"
+    
+    # If a date is provided, add a date tag
+    [ "$date" != "" ] && tags="$tags -t ${name}:${date}"
 
     echo "$tags"
 }
@@ -156,6 +163,7 @@ usage() {
       -t, --timestamp        Use the current timestamp as a tag
       -a, --architecture     Set the build architecture (default: linux/amd64)
       -p, --push             Enable pushing the image to the registry
+      -d, --date             Use the current date and time as a tag
       -h, --help             Display this help message and exit
     "
 }
