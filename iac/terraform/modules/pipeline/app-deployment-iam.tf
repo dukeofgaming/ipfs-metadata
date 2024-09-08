@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     actions = [
       "iam:GetRole",
       "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies",
+      "iam:ListAttachedRolePolicies"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -25,9 +25,21 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeVpcs",
       "ec2:DescribeVpcAttribute",
       "ec2:DescribeSecurityGroups",
-      "ec2:DescribeSubnets",       
-      "ec2:DescribeNetworkAcls",   
-      "ec2:DescribeRouteTables",    
+      "ec2:DescribeSubnets",
+      "ec2:DescribeNetworkAcls",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeInstances",          
+      "ec2:DescribeSecurityGroupRules", 
+      "ec2:DescribeInternetGateways"    
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+
+  # Elastic Load Balancing permissions
+  statement {
+    actions = [
+      "elasticloadbalancing:DescribeLoadBalancers" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -46,7 +58,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   statement {
     actions = [
       "logs:DescribeLogGroups",
-      "logs:ListTagsForResource",
+      "logs:ListTagsForResource"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -58,6 +70,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "rds:DescribeDBParameterGroups",
       "rds:DescribeDBParameters",
       "rds:ListTagsForResource",
+      "rds:DescribeDBSubnetGroups" 
     ]
     resources = ["*"]
     effect    = "Allow"
