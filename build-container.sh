@@ -131,6 +131,7 @@ docker_push() {
         [ "$version" != "" ] && docker push "${registry_ecr}:${version}"
         [ "$commit" != "" ] && docker push "${registry_ecr}:${commit}"
         [ "$timestamp" != "" ] && docker push "${registry_ecr}:${timestamp}"
+        [ "$date" != "" ] && docker push "${registry_ecr}:${date}"
 
         echo "Push complete."
     else
