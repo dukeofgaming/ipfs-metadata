@@ -137,6 +137,21 @@ docker_push() {
         echo "Push skipped. Either the push flag was not set or no ECR registry was provided."
     fi
 }
+# Function to login to ECR
+ecr_login() {
+    local registry_ecr="$1"
+    # Extract the region from the ECR URL
+    local region=$(echo "$registry_ecr" | awk -F'.' '{print $4}')
+    # Remove the last segment to get the base URL
+    local base_url=$(echo "$registry_ecr" | awk -F'/' '{sub(/\/[^\/]+$/, "", $0); print $0}')
+    
+    echo "
+    Logging in to ECR registry $base_url in region $region...
+    "
+
+    aws ecr get-login-password --region "$region" \
+        | docker login --username AWS --password-stdin "$base_url"
+}
 
 # Function to print all arguments and options for debugging
 print_debug_info() {
@@ -171,6 +186,10 @@ usage() {
 # Main function to run the script logic
 main() {
     parse_arguments "$@"  # Parse arguments and set variables
+    # Login to ECR if registry URL is provided
+    if [ -n "$registry_ecr" ]; then
+        ecr_login "$registry_ecr"
+    fi
     
     # Print debug info
     print_debug_info
