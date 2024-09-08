@@ -33,16 +33,20 @@ resource "aws_iam_policy" "pipeline_push_ecr" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = [
-          "ecr:GetAuthorizationToken",
+        Action  : [
           "ecr:BatchCheckLayerAvailability",
           "ecr:CompleteLayerUpload",
           "ecr:InitiateLayerUpload",
           "ecr:PutImage",
           "ecr:UploadLayerPart",
         ]
-        Effect   = "Allow"
-        Resource = module.ecr.repository_arn
+        Effect   : "Allow"
+        Resource : module.ecr.repository_arn
+      },
+      {
+        Effect    : "Allow",
+        Action    : "ecr:GetAuthorizationToken",
+        Resource  : "*"
       }
     ]
   })
