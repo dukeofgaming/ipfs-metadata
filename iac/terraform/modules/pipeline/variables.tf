@@ -15,11 +15,20 @@ variable "branch" {
 
 
 # AWS
+#TODO: Convert to collection
 variable "aws_iam_user" {
     description = "The AWS account ID for the pipeline to deploy resources"
     type        = object({
       name : string
       path : string
+    })
+}
+
+variable "backend" {
+    description = "The backend configuration for the pipeline"
+    type        = object({
+        s3_bucket_arn     : string
+        dynamodb_table_arn : string
     })
 }
 
