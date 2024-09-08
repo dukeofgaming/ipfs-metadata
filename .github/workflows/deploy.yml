@@ -49,6 +49,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -63,11 +67,15 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="backend-${BRANCH_NAME}.hcl"
         
       - name: Terraform Plan
         working-directory: ${{ env.TERRAFORM_DIR }}
-        run: terraform plan
+        run: |
+          terraform plan \
+            -var="container_image="${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)"
 
       - name: Terraform Apply
         working-directory: ${{ env.TERRAFORM_DIR }}
