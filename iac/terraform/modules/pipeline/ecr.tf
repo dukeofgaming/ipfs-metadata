@@ -23,3 +23,31 @@ module "ecr" {
   })
 
 }
+
+#IAM for pipeline account
+resource "aws_iam_policy" "pipeline_push_ecr" {
+  name        = "ECRPushPolicy"
+  description = "Policy to allow pushing to ECR repository"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:CompleteLayerUpload",
+          "ecr:InitiateLayerUpload",
+          "ecr:PutImage",
+          "ecr:UploadLayerPart"
+        ]
+        Effect   = "Allow"
+        Resource = module.ecr.repository_arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_user_policy_attachment" "ecr_push_policy_attachment" {
+  user       = data.aws_iam_user.this.user_name
+  policy_arn = aws_iam_policy.pipeline_push_ecr.arn
+}
