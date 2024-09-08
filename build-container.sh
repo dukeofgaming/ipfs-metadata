@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-# set -o pipefail
 
 build_context="."
 version=""                  # Default to empty, meaning no version
@@ -25,6 +24,7 @@ get_current_directory_name() {
 parse_arguments() {
     image_name=""
     registry_ecr=""
+    branch=""  # Variable to store the current git branch name
 
     while [ "$1" != "" ]; do
         case "$1" in
@@ -55,6 +55,9 @@ parse_arguments() {
                 ;;
             -d | --date)
                 date=$(date +%Y-%m-%d-%H-%M-%S)  # Get current date and time in specified format
+                ;;
+            -b | --branch)
+                branch=$(git rev-parse --abbrev-ref HEAD)
                 ;;
             -h | --help)
                 usage
@@ -92,6 +95,9 @@ add_tags() {
     
     # If a date is provided, add a date tag
     [ "$date" != "" ] && tags="$tags -t ${name}:${date}"
+
+    # If a branch name is provided, add a branch name tag
+    [ "$branch" != "" ] && tags="$tags -t ${name}:${branch}"
 
     echo "$tags"
 }
@@ -134,6 +140,7 @@ docker_push() {
         [ "$commit" != "" ] && docker push "${registry_ecr}:${commit}"
         [ "$timestamp" != "" ] && docker push "${registry_ecr}:${timestamp}"
         [ "$date" != "" ] && docker push "${registry_ecr}:${date}"
+        [ "$branch" != "" ] && docker push "${registry_ecr}:${branch}"
 
         echo "Push complete."
     else
@@ -158,15 +165,21 @@ ecr_login() {
 
 # Function to print all arguments and options for debugging
 print_debug_info() {
-    echo "DEBUG INFO:"
-    echo "Image Name: $image_name"
-    echo "Registry (ECR): $registry_ecr"
-    echo "Version: $version"
-    echo "Commit: $commit"
-    echo "Timestamp: $timestamp"
-    echo "Architecture: $architecture"
-    echo "Push Enabled: $push_enabled"
-    echo "=============================="
+    echo "
+    ==============================
+    ======== DEBUG INFO ==========
+    ==============================
+    Image Name: $image_name
+    Registry (ECR): $registry_ecr
+    Version: $version
+    Commit: $commit
+    Timestamp: $timestamp
+    Branch: $branch
+
+    Architecture: $architecture
+    Push Enabled: $push_enabled
+    ==============================
+    "
 }
 
 # Function to display usage information
@@ -174,15 +187,16 @@ usage() {
     echo "Usage: $0 [OPTIONS]
 
     Options:
-      -n, --name             Set the image name
-      -r, --registry-ecr     Set the ECR registry URL
-      -v, --version          Set the image version
-      -c, --commit           Use the current git commit hash as a tag
-      -t, --timestamp        Use the current timestamp as a tag
-      -a, --architecture     Set the build architecture (default: linux/amd64)
-      -p, --push             Enable pushing the image to the registry
-      -d, --date             Use the current date and time as a tag
-      -h, --help             Display this help message and exit
+      -n, --name            Set the image name
+      -r, --registry-ecr    Set the ECR registry URL
+      -v, --version         Set the image version
+      -c, --commit          Use the current git commit hash as a tag
+      -b, --branch          Use the current git branch as a tag
+      -t, --timestamp       Use the current timestamp as a tag
+      -a, --architecture    Set the build architecture (default: linux/amd64)
+      -p, --push            Enable pushing the image to the registry
+      -d, --date            Use the current date and time as a tag
+      -h, --help            Display this help message and exit
     "
 }
 

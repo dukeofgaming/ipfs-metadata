@@ -1,0 +1,80 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  BuildAndPush:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Build and push Docker image
+        run: |
+          chmod +x ./build-container.sh
+          cp .env.dist .env
+
+          ./build-container.sh \
+            --registry-ecr ${{ vars.ECR_URL }} \
+            --timestamp \
+            --commit \
+            --branch \
+            --date \
+            --push || exit 1
+
+      - name: Make terraform-{branch}.tfvars.json and  amend commit
+        run: |
+          
+
+  RunTerraform:
+    runs-on: ubuntu-latest
+    environment: dev
+    needs: BuildAndPush
+    env:
+      TERRAFORM_DIR: ./iac/terraform/app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+            terraform_version: "1.9.5"
+
+      - name: Terraform Init
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform init
+        
+      - name: Terraform Plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform plan
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: | 
+          terraform apply \
+            -var="container_image="${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
+            -auto-approve
+
+
+      
