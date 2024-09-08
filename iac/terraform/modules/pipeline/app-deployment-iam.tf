@@ -11,7 +11,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     actions = [
       "iam:GetRole",
       "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies"
+      "iam:ListAttachedRolePolicies" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -31,8 +31,10 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeInstances",
       "ec2:DescribeSecurityGroupRules",
       "ec2:DescribeInternetGateways",
-      "ec2:DescribeInstanceTypes", 
-      "ec2:DescribeAddresses"      
+      "ec2:DescribeInstanceTypes",
+      "ec2:DescribeAddresses",
+      "ec2:DescribeTags",               
+      "ec2:DescribeAddressesAttribute"  
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -42,7 +44,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   statement {
     actions = [
       "elasticloadbalancing:DescribeLoadBalancers",
-      "elasticloadbalancing:DescribeLoadBalancerAttributes" 
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeTags" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -51,7 +54,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   # ECS permissions
   statement {
     actions = [
-      "ecs:DescribeClusters"
+      "ecs:DescribeClusters",
+      "ecs:DescribeTaskDefinition" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -74,7 +78,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "rds:DescribeDBParameters",
       "rds:ListTagsForResource",
       "rds:DescribeDBSubnetGroups",
-      "rds:DescribeDBInstances" 
+      "rds:DescribeDBInstances"
     ]
     resources = ["*"]
     effect    = "Allow"
