@@ -13,3 +13,5 @@ provider "aws" {
     tags = local.tags
   }
 }
+
+provider "github" {}

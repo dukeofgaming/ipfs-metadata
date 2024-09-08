@@ -16,15 +16,38 @@ variable "environments" {
 }
 
 variable "environment_accounts" {
-  description = "The map of environment to AWS account ID"
-  type = map(
+  description = "Map of environment names to sets of AWS accounts"
+
+  type = map(      
     set(string)
   )
 
   default = {
-    "dev" = ["user", "pipeline"]
+    "dev" = []
   }
+}
 
+
+variable "pipelines" {
+  description = "The list of pipelines to deploy"
+  type        = map(
+    object({
+      environment             : string
+      branch                  : string
+
+      # Pipeline must have an account, if none is supplied, one will be created
+      aws_iam_user  : optional(object({
+        name : optional(string)
+        path : optional(string, "/")
+      }), {})  
+
+    })
+  )
+}
+
+variable "github_repository" {
+  description = "The GitHub repository for the pipeline"
+  type        = string
 }
 
 variable "state_backend_name" {
