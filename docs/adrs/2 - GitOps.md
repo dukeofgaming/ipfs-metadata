@@ -168,8 +168,15 @@ gitGraph
 ## Consequences
 
 1. The `core` state for `environments` and separate user/service accounts can be provisioned by the "environments" Terraform project. 
+
 2. The app Terraform project can be used securely with isolated service accounts.
+
 3. Only the "environment" Terraform project needs a root/privileged account.
+
 4. No human intervention needed to supply AWS access keys.
+
 5. Opens the possibility for branch-based deployments for the dev environment e.g. with Terraform Workspaces (should not be used for major environments like  staging or production).
 
+5. Doing [least-privileged](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege) IAM roles for the pipelines and services is a simple workflow.
+
+6. The promotion process is simple and can be automated with GitHub Actions.
