@@ -39,6 +39,6 @@ jobs:
             --timestamp \
             --commit \
             --date \
-            --push
+            --push || exit 1
 
       

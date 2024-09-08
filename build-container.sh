@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+# set -o pipefail
 
 build_context="."
 version=""                  # Default to empty, meaning no version
