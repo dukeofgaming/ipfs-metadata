@@ -1,5 +1,11 @@
 name: Container Build
 
+on:
+  push:
+    branches:
+      - main
+      - dev
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +31,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           chmod +x ./build-container.sh
-          
+
           ./build-container.sh \
             --registry-ecr ${{ vars.ECR_URL }} \
             --timestamp \
