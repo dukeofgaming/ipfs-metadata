@@ -35,8 +35,9 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeAddresses",
       "ec2:DescribeTags",
       "ec2:DescribeAddressesAttribute",
-      "ec2:DescribeInstanceAttribute", 
-      "ec2:DescribeNatGateways"        
+      "ec2:DescribeInstanceAttribute",
+      "ec2:DescribeNatGateways",
+      "ec2:DescribeVolumes" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -48,7 +49,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "elasticloadbalancing:DescribeLoadBalancers",
       "elasticloadbalancing:DescribeLoadBalancerAttributes",
       "elasticloadbalancing:DescribeTags",
-      "elasticloadbalancing:DescribeTargetGroups" 
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetGroupAttributes" 
     ]
     resources = ["*"]
     effect    = "Allow"
