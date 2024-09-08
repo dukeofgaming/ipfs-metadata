@@ -38,7 +38,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeInstanceAttribute",
       "ec2:DescribeNatGateways",
       "ec2:DescribeVolumes",
-      "ec2:DescribeInstanceCreditSpecifications" 
+      "ec2:DescribeInstanceCreditSpecifications",
+      "ec2:DescribeNetworkInsightsPaths" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -52,7 +53,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "elasticloadbalancing:DescribeTags",
       "elasticloadbalancing:DescribeTargetGroups",
       "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "elasticloadbalancing:DescribeListeners" 
+      "elasticloadbalancing:DescribeListeners"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -63,7 +64,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     actions = [
       "ecs:DescribeClusters",
       "ecs:DescribeTaskDefinition",
-      "ecs:DescribeServices" 
+      "ecs:DescribeServices"
     ]
     resources = ["*"]
     effect    = "Allow"
