@@ -34,9 +34,9 @@ tag() {
     case "$1" in
       -d|--date)
         if [ -n "$2" ] && [ "${2#-}" != "$2" ]; then
-          date_flag="date/$(date "+%Y/%m/%d/%H_%M_%S")"
+          date_flag=$(date "+%Y/%m/%d/%H-%M-%S")
         else
-          date_flag="date/$2"
+          date_flag="$2"
           shift
         fi
         shift
@@ -61,7 +61,7 @@ tag() {
 
   # If no date is provided, use the current date/time
   if [ -z "$date_flag" ]; then
-    date_flag="date/$(date "+%Y/%m/%d/%H_%M_%S")"
+    date_flag=$(date "+%Y/%m/%d/%H-%M-%S")
   fi
 
   # Construct the date-based tag
