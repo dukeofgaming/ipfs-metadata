@@ -89,35 +89,40 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     effect    = "Allow"
   }
 
-    # Tiros permissions for Network Insights
-  statement {
-    actions = [
-      "tiros:CreateQuery",
-      "tiros:StartQuery",                 
-      "tiros:CreateRoute",                
-      "tiros:ListPaths",                  
-      "tiros:ReadPermissions",
-      "tiros:ModifyPermissions",
-      "tiros:StartAnalysis",              
-      "tiros:StartExecution",             
-      "tiros:ExecuteAnalysis",
-      "tiros:ViewResults",                
-      "tiros:ListExecutions",
-      "tiros:CreatePermissionsBoundary",  
-      "tiros:ListPermissions",            
-      "tiros:DescribePermissionsBoundary",
-      "tiros:StopExecution",
-      "tiros:ViewNetworkInsightsResults",  
-      "tiros:DeleteNetworkInsightsAnalysis", 
-      "tiros:DeleteAnalysis",             
-      "tiros:StartNetworkInsightsAnalysis",  
-      "tiros:ViewNetworkInsightsPaths",  # To ensure visibility of paths
-      "tiros:DescribeNetworkInsightsResults", # To describe results
-      "tiros:StartNetworkAnalysis" # Added in case of role-specific start
-    ]
-    resources = ["*"]
-    effect    = "Allow"
-  }
+  # Updated Tiros permissions for Network Insights
+  # Tiros permissions for Network Insights
+  # statement {
+  #   actions = [
+  #     "tiros:CreateQuery",                  # Create a new query for insights
+  #     "tiros:StartQuery",                   # Start a query to gather insights
+  #     "tiros:CreateRoute",                  # Create routes for network traffic insights
+  #     "tiros:ListPaths",                    # List available network paths
+  #     "tiros:ReadPermissions",              # Read the permissions set for Tiros
+  #     "tiros:ModifyPermissions",            # Modify permissions for Tiros operations
+  #     "tiros:StartAnalysis",                # Start network insights analysis
+  #     "tiros:StartExecution",               # Execute the insights analysis process
+  #     "tiros:ExecuteAnalysis",              # Actually run the analysis operation
+  #     "tiros:ViewResults",                  # View the results of the analysis
+  #     "tiros:ListExecutions",               # List the executed analysis jobs
+  #     "tiros:ViewNetworkInsightsResults",   # View network insight analysis results
+  #     "tiros:DeleteNetworkInsightsAnalysis",# Delete completed or failed analyses
+  #     "tiros:StartNetworkInsightsAnalysis", # Start the process for insights analysis
+  #     "tiros:StopExecution",                # Stop an in-progress analysis
+  #     "tiros:ViewNetworkInsightsPaths",     # View the network paths set for analysis
+  #     "tiros:DescribeNetworkInsightsResults", # Describe the details of the insights results
+  #     "tiros:DescribePermissionsBoundary",  # Describe the permissions boundary for Tiros
+  #     "tiros:CreatePermissionsBoundary",    # Create a permissions boundary for Tiros
+  #     "tiros:ListPermissions",              # List the permissions available for Tiros
+  #     "tiros:CreateNetworkInsightsPath",    # Create a network insights path
+  #     "tiros:CreateRoute",                  # Create a route for traffic insights
+  #     "tiros:DeleteNetworkInsightsPath",    # Delete an existing network insights path
+  #     "tiros:CreateNetworkInsightsAnalysis",# Start the network insights analysis process
+  #     "tiros:DeleteAnalysis",               # Delete an existing analysis job
+  #     "tiros:StopAnalysis"                  # Stop an in-progress network insights analysis
+  #   ]
+  #   resources = ["*"]
+  #   effect    = "Allow"
+  # }
 
 
 
