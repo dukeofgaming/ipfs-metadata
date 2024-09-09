@@ -87,8 +87,10 @@ jobs:
         working-directory: ./iac/
         run: |
           chmod +x ./deploy-tags.sh
+          
           ./deploy-tags.sh \
-            --current
+            tag\
+              --current
 
 
       # - name: Terraform Destroy
