@@ -7,6 +7,8 @@ resource "aws_iam_policy" "pipeline_permissions" {
 
 
 data "aws_iam_policy_document" "pipeline_permissions" {
+  version = "2012-10-17"
+
   # IAM permissions
   statement {
     actions = [
@@ -83,7 +85,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:CreateRoute",                     
       "ec2:CreateNetworkInsightsPath",
       "ec2:CreateNatGateway",
-      "ec2:StartNetworkInsightsAnalysis"
+      "ec2:StartNetworkInsightsAnalysis",
+      "ec2:AssociateRouteTable",
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -143,7 +146,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "elasticloadbalancing:ModifyLoadBalancerAttributes",
       "elasticloadbalancing:CreateTargetGroup",
       "elasticloadbalancing:ModifyTargetGroupAttributes",
-      "elasticloadbalancing:CreateListener"
+      "elasticloadbalancing:CreateListener",
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -163,7 +166,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ecs:PutClusterCapacityProviders",
       "ecs:DeleteCluster",
       "ecs:CreateCluster",
-      "ecs:CreateService"
+      "ecs:CreateService",
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -177,7 +180,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "logs:DeleteLogGroup",
       "logs:CreateLogGroup",
       "logs:TagResource",
-      "logs:PutRetentionPolicy"
+      "logs:PutRetentionPolicy",
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -197,7 +200,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "rds:CreateDBParameterGroup",
       "rds:AddTagsToResource",
       "rds:ModifyDBParameterGroup",
-      "rds:CreateDBInstance"
+      "rds:CreateDBInstance",
+      "rds:CreateDBSubnetGroup",
     ]
     resources = ["*"]
     effect    = "Allow"
