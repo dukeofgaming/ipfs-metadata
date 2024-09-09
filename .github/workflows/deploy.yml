@@ -20,7 +20,11 @@ jobs:
   BuildAndPush:
     runs-on: ubuntu-latest
     steps:
-      - uses: ../.github/actions/container-build
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Build and Push Docker Image
+        uses: ./.github/actions/container-build
         with:
           aws_region: ${{ env.AWS_REGION }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
