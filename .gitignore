@@ -6,3 +6,4 @@
 # Terraform
 .terraform
 backend.hcl
+iac/terraform/environments/backend.tf

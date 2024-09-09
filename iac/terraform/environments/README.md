@@ -1,24 +1,55 @@
-This module will help you create the state backend and service accounts you need for an environment (e.g. users and pipeline)
+This module will help you create the state backend and service accounts you need for an environment (e.g., users and pipeline).
 
 # Setup
 ## Initial Setup
 
-1. Copy the `.env.sh.dist` file to `.env.sh` and fill in the required values, then use `source .env.sh` to set the environment variables in your shell session.
-3. Run `terraform init` and `terraform apply`. If this is your first run you will need to comment the `backend "s3" {}` block in `iac/terraform/environments/main.tf`
-3. **RECOMMENDED**: Setup the backend for this project using the default `core` environment.
-    1. Run the `terraform output` command to see the values of `core_state`.
-    2. Copy the file `backend.tf.dist` to `backend.tf` and fill in the values.
-    3. Run `terraform init -backend-config=backend.hcl`.
+1. Copy the `.env.sh.dist` file to `.env.sh` and fill in the required values, then run:
 
+    ```sh
+    source .env.sh
+    ```
+
+2. Run `terraform init` and `terraform apply`. 
+    
+    > **NOTE**: If this is your first run, ensure the `setup_core_environment` and `update_core_backend_hcl` variables are configured appropriately in your `terraform.tfvars` or passed as `-var` arguments to `terraform apply`. 
+    >
+    > By default they are both set to true, which will create the core environment and generate the `backend.hcl` file respectively.
+
+3. Choose your desired backend:
+
+    - **S3 (RECOMMENDED DEFAULT)**: 
+
+        1. After the first `terraform apply`, ensure the `backend.hcl` file has been generated with the correct backend configuration. 
+        
+        2. Copy `backend.tf.dist` to `backend.tf` 
+        
+        3. `terraform init -backend-config=backend.hcl` to reinitialize Terraform with the new backend settings.
+
+        - The `setup_core_environment` variable controls whether the core environment's resources, including the state backend (S3 bucket and DynamoDB table), are created. By default these are set to `true` to enable the creation of these resources.
+
+        - The `update_core_backend_hcl` variable, when set to `true` along with `setup_core_environment`, triggers the generation of the `backend.hcl` for the **core environment** file after applying your Terraform configuration. 
+
+    - **Local**: Do nothing. The state will continue to be stored locally. 
+        > Note: This is okay for experimentation, not for production. Sensitive information can be stored unencrypted in the state, which if put in version control **it will** be a serious security risk.
 
 ## Existing setup
 
-If you have an existing setup in version control, you can use the `terraform init -backend-config=backend-somesetup.hcl` command to initialize the backend configuration.
+If you have an existing setup in version control, you can use the `terraform init -backend-config=backend.hcl` command to initialize the backend configuration.
 
 If you wish to put the backend configuration in version control, save your backend config with a file name *different* than `backend.hcl`.
 
-If you wish to ommit the creation of the core environment, set this to false in the `terraform.tfvars` file:
+## `backend.hcl` generation
+
+By default, on the first run and onwards
+
+To omit the creation of the core environment, set `setup_core_environment` to `false` in the `terraform.tfvars` file:
 
 ```hcl
 setup_core_environment = false
+```
+
+To prevent automatic generation of the `backend.hcl` file, set `update_backend_hcl` to `false`:
+
+```hcl
+update_core_backend_hcl = false
 ```

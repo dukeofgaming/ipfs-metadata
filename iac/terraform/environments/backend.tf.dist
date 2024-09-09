@@ -1,0 +1,6 @@
+terraform{
+    
+    # See README.md for more information.
+    
+    backend "s3" {}
+}

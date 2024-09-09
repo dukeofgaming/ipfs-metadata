@@ -1,8 +1,8 @@
 # Relevant information from environments to configure app Terraform project,
 # Github pipeine, etc.
-output "environments" {
-  description = "The list of environments"
-  value = {
+
+locals {
+  environments = {
     for environment in module.environments :
     environment.name => {
       name : environment.name
@@ -25,6 +25,10 @@ output "environments" {
       }
     }
   }
+}
+output "environments" {
+  description = "The list of environments"
+  value = local.environments
 }
 
 # Managed pipeline configuration

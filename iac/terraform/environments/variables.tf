@@ -15,6 +15,18 @@ variable "environments" {
   default     = ["dev"]
 }
 
+variable "update_backend_hcl" {
+  description = "The flag to update the backend configuration"
+  type        = bool
+  default     = true
+}
+
+variable "update_app_backend_hcl" {
+  description = "The flag to update the backend configuration"
+  type        = bool
+  default     = true
+}
+
 variable "environment_accounts" {
   description = "Map of environment names to sets of AWS accounts"
 
