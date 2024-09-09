@@ -1,5 +1,17 @@
 #!/bin/sh
 
+# Usage function for the main script
+usage() {
+  echo "Usage: $0 {tag|find} [options]"
+  echo ""
+  echo "Subcommands:"
+  echo "  tag   Create and push a tag."
+  echo "  find  Find and list tags."
+  echo ""
+  echo "Use '$0 tag --help' or '$0 find --help' for subcommand-specific options."
+  exit 1
+}
+
 # Usage function for the 'tag' subcommand
 usage_tag() {
   echo "Usage: $0 tag [options]"
@@ -28,26 +40,32 @@ tag() {
   date_flag=""
   current_flag="false"
   dry_run="false"
+  date_provided="false"
+
+  # If no options are passed, show usage
+  if [ $# -eq 0 ]; then
+    usage_tag
+  fi
 
   # Parse options
   while [ $# -gt 0 ]; do
     case "$1" in
       -d|--date)
-        if [ -n "$2" ] && [ "${2#-}" != "$2" ]; then
+        date_provided="true"
+        # If the next argument starts with "-" or is absent, use the current date/time
+        if [ -z "$2" ] || [ "${2#-}" != "$2" ]; then
           date_flag=$(date "+%Y/%m/%d/%H-%M-%S")
         else
+          # Use the provided date
           date_flag="$2"
           shift
         fi
-        shift
         ;;
       -c|--current)
         current_flag="true"
-        shift
         ;;
       --dry-run)
         dry_run="true"
-        shift
         ;;
       -h|--help)
         usage_tag
@@ -57,30 +75,40 @@ tag() {
         usage_tag
         ;;
     esac
+    shift
   done
 
-  # If no date is provided, use the current date/time
-  if [ -z "$date_flag" ]; then
-    date_flag=$(date "+%Y/%m/%d/%H-%M-%S")
+  # If --date is provided without a value, generate a date, otherwise don't generate one
+  if [ "$date_provided" = "false" ]; then
+    date_flag=""
   fi
 
-  # Construct the date-based tag
-  tag_name="deploy/${branch}/${date_flag}"
+  # If no date is provided and no --date flag is used, use the current date/time
+  if [ -n "$date_flag" ]; then
+    tag_name="deploy/${branch}/${date_flag}"
+  else
+    tag_name=""
+  fi
+
   current_tag="deploy/${branch}/current"
 
   # Print commands instead of executing them if --dry-run is specified
   if [ "$dry_run" = "true" ]; then
-    echo "git tag $tag_name"
-    echo "git push origin $tag_name"
+    if [ -n "$tag_name" ]; then
+      echo "git tag $tag_name"
+      echo "git push origin $tag_name"
+    fi
     if [ "$current_flag" = "true" ]; then
       echo "git tag -f $current_tag"
       echo "git push origin -f $current_tag"
     fi
   else
-    # Create the date-based tag and push it
-    git tag "$tag_name"
-    git push origin "$tag_name"
-    echo "Tag created and pushed: $tag_name"
+    # Create the date-based tag and push it if a date tag was provided
+    if [ -n "$tag_name" ]; then
+      git tag "$tag_name"
+      git push origin "$tag_name"
+      echo "Tag created and pushed: $tag_name"
+    fi
 
     # Update the 'deploy/<branch>/current' tag if --current is specified
     if [ "$current_flag" = "true" ]; then
@@ -92,7 +120,7 @@ tag() {
 }
 
 # Function to find tags based on options
-find() {
+find_tags() {
   filter="latest"
   dry_run="false"
 
@@ -127,10 +155,11 @@ find() {
     esac
   done
 
-  # Print find command instead of executing if --dry-run is specified
+  # Print the command in dry-run mode
   if [ "$dry_run" = "true" ]; then
-    echo "git tag -l $filter"
+    echo "git tag -l '$filter'"
   else
+    # Actually list the matching tags
     git tag -l "$filter"
   fi
 }
@@ -143,10 +172,9 @@ case "$1" in
     ;;
   find)
     shift
-    find "$@"
+    find_tags "$@"
     ;;
   *)
-    echo "Usage: $0 {tag|find} [options]"
-    exit 1
+    usage
     ;;
 esac
