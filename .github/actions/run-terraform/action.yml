@@ -1,0 +1,59 @@
+name: 'Run Terraform'
+description: 'Runs Terraform commands'
+
+inputs:
+  aws_region:
+    description: 'AWS region'
+    required: true
+  aws_access_key_id:
+    description: 'AWS Access Key ID'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS Secret Access Key'
+    required: true
+  terraform_dir:
+    description: 'Directory containing Terraform configuration files'
+    required: true
+  ecr_url:
+    description: 'ECR URL for the Docker image'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws_access_key_id }}
+        aws-secret-access-key: ${{ inputs.aws_secret_access_key }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.9.5"
+
+    - name: Terraform Init
+      run: |
+        terraform init \
+          -backend-config="backend-${{ github.ref_name }}.hcl"
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
+
+    - name: Terraform Plan
+      run: |
+        terraform plan \
+          -var="container_image=${{ inputs.ecr_url }}:$(git rev-parse --short HEAD)"
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
+
+    - name: Terraform Apply
+      run: | 
+        terraform apply \
+          -var="container_image=${{ inputs.ecr_url }}:$(git rev-parse --short HEAD)" \
+          -auto-approve
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash

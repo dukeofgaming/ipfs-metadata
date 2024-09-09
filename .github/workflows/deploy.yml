@@ -9,13 +9,6 @@ on:
     tags-ignore:
       - 'deploy/**'
 
-
-# env:
-#   AWS_REGION: ${{ vars.AWS_REGION }}
-#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#   ECR_URL: ${{ secrets.ECR_URL }}
-
 jobs:
   BuildAndPush:
     runs-on: ubuntu-latest
@@ -43,40 +36,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Run Terraform Action
+        uses: ./.github/actions/run-terraform
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws_region: ${{ vars.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          terraform_dir: ${{ env.TERRAFORM_DIR }}
+          ecr_url: ${{ vars.ECR_URL }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-            terraform_version: "1.9.5"
+      # - name: Extract branch name
+      #   shell: bash
+      #   run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
 
-      - name: Terraform Init
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: |
-          terraform init \
-            -backend-config="backend-${BRANCH_NAME}.hcl"
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ${{ vars.AWS_REGION }}
+
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v3
+      #   with:
+      #       terraform_version: "1.9.5"
+
+      # - name: Terraform Init
+      #   working-directory: ${{ env.TERRAFORM_DIR }}
+      #   run: |
+      #     terraform init \
+      #       -backend-config="backend-${BRANCH_NAME}.hcl"
         
-      - name: Terraform Plan
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: |
-          terraform plan \
-            -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)"
+      # - name: Terraform Plan
+      #   working-directory: ${{ env.TERRAFORM_DIR }}
+      #   run: |
+      #     terraform plan \
+      #       -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)"
 
-      - name: Terraform Apply
-        working-directory: ${{ env.TERRAFORM_DIR }}
-        run: | 
-          terraform apply \
-            -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
-            -auto-approve
+      # - name: Terraform Apply
+      #   working-directory: ${{ env.TERRAFORM_DIR }}
+      #   run: | 
+      #     terraform apply \
+      #       -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
+      #       -auto-approve
 
       - name: Tag the deployment
         working-directory: ./iac/
