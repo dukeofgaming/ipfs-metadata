@@ -12,7 +12,10 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "iam:GetRole",
       "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
-      "iam:PassRole" 
+      "iam:PassRole",
+      "iam:DetachRolePolicy",
+      "iam:ListInstanceProfilesForRole",
+      "iam:DeleteRole"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -41,7 +44,21 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeVolumes",
       "ec2:DescribeInstanceCreditSpecifications",
       "ec2:DescribeNetworkInsightsPaths",
-      "ec2:DescribeNetworkInsightsAnalyses"
+      "ec2:DescribeNetworkInsightsAnalyses",
+      "ec2:DisassociateRouteTable", 
+      "ec2:DeleteRoute", 
+      "ec2:RevokeSecurityGroupIngress", 
+      "ec2:RevokeSecurityGroupEgress", 
+      "ec2:DeleteNetworkInsightsAnalysis",
+      "ec2:DeleteNatGateway",
+      "ec2:DeleteNetworkInsightsPath",
+      "ec2:DeleteRouteTable",
+      "ec2:DisassociateAddress",
+      "ec2:TerminateInstances",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteSubnet",                
+      "ec2:ReleaseAddress",              
+      "ec2:DeleteSecurityGroup"          
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -55,7 +72,10 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "elasticloadbalancing:DescribeTags",
       "elasticloadbalancing:DescribeTargetGroups",
       "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "elasticloadbalancing:DescribeListeners"
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:DeleteLoadBalancer"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -70,7 +90,10 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ecs:DeregisterTaskDefinition",
       "ecs:RegisterTaskDefinition",
       "ecs:TagResource",
-      "ecs:UpdateService" 
+      "ecs:UpdateService",
+      "ecs:DeleteService", 
+      "ecs:PutClusterCapacityProviders",
+      "ecs:DeleteCluster"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -80,7 +103,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   statement {
     actions = [
       "logs:DescribeLogGroups",
-      "logs:ListTagsForResource"
+      "logs:ListTagsForResource",
+      "logs:DeleteLogGroup"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -93,12 +117,17 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "rds:DescribeDBParameters",
       "rds:ListTagsForResource",
       "rds:DescribeDBSubnetGroups",
-      "rds:DescribeDBInstances"
+      "rds:DescribeDBInstances",
+      "rds:DeleteDBInstance",
+      "rds:DeleteDBParameterGroup",
+      "rds:DeleteDBSubnetGroup"
     ]
     resources = ["*"]
     effect    = "Allow"
   }
 }
+
+
 
 resource "aws_iam_user_policy_attachment" "pipeline_permissions" {
   user       = data.aws_iam_user.this.user_name
