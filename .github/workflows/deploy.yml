@@ -77,12 +77,17 @@ jobs:
           terraform plan \
             -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)"
 
-      - name: Terraform Apply
+      # - name: Terraform Apply
+      #   working-directory: ${{ env.TERRAFORM_DIR }}
+      #   run: | 
+      #     terraform apply \
+      #       -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
+      #       -auto-approve
+
+      - name: Terraform Destroy
         working-directory: ${{ env.TERRAFORM_DIR }}
         run: | 
-          terraform apply \
-            -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
+          terraform destroy \
             -auto-approve
-
 
       
