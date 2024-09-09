@@ -56,9 +56,12 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DisassociateAddress",
       "ec2:TerminateInstances",
       "ec2:DescribeNetworkInterfaces",
-      "ec2:DeleteSubnet",                
-      "ec2:ReleaseAddress",              
-      "ec2:DeleteSecurityGroup"          
+      "ec2:DeleteSubnet",
+      "ec2:ReleaseAddress",
+      "ec2:DeleteSecurityGroup",
+      "ec2:DetachInternetGateway",
+      "ec2:DeleteInternetGateway",
+      "ec2:DeleteVpc"                
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -126,7 +129,6 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     effect    = "Allow"
   }
 }
-
 
 
 resource "aws_iam_user_policy_attachment" "pipeline_permissions" {
