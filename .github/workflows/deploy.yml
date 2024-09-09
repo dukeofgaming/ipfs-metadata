@@ -34,10 +34,6 @@ jobs:
             --date \
             --push || exit 1
 
-      - name: Make terraform-{branch}.tfvars.json and  amend commit
-        run: |
-          
-
   RunTerraform:
     runs-on: ubuntu-latest
     environment: dev
