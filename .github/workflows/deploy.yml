@@ -6,6 +6,9 @@ on:
       - main
       - dev
 
+    tags-ignore:
+      - 'deploy/**'
+
 jobs:
   BuildAndPush:
     runs-on: ubuntu-latest
@@ -79,6 +82,14 @@ jobs:
           terraform apply \
             -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
             -auto-approve
+
+      - name: Tag the deployment
+        working-directory: ./iac/
+        run: |
+          chmod +x ./deploy-tags.sh
+          ./deploy-tags.sh \
+            --current
+
 
       # - name: Terraform Destroy
       #   working-directory: ${{ env.TERRAFORM_DIR }}
