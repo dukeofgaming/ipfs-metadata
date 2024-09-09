@@ -40,7 +40,7 @@ If you wish to put the backend configuration in version control, save your backe
 
 ## `backend.hcl` generation
 
-By default, on the first run and onwards
+By default, on the first run and onwards, the `backend.hcl` file will be generated for you.
 
 To omit the creation of the core environment, set `setup_core_environment` to `false` in the `terraform.tfvars` file:
 

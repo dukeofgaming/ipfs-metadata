@@ -122,15 +122,36 @@ Run `docker-compose down --volumes` to shut down the application and remove the 
 
 You will need Terraform for this, which can be installed from the instructions here [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
-### Setup / Initialize the core state
+### Setup / Initialize the `core` state
 
-Copy the `.env.sh.dist` file to `.env.sh` and fill in the values for your AWS account. Once you do that, `source .env.sh` to set the environment variables in your shell session.
+#### Quickstart
 
-Once you do that, run `terraform init` and `terraform apply` if it's your first run for a new set of environments (you will need to comment the `backend "s3" {}` block in `iac/terraform/environments/main.tf`).
+For full instructions including how to migrate to an S3 backend from an initial run (highly recommended), see the [README](iac/terraform/core/README.md) in the `iac/terraform/core` directory.
+
+1. Copy the `.env.sh.dist` file to `.env.sh` and fill in the required values, then run:
+
+    ```sh
+    source .env.sh
+    ```
+
+2. Run terraform
+
+    ```sh
+    terraform init
+    terraform apply
+    ```
+
+3. Copy `backend.tf.dist` to `backend.tf`; a `backend.hcl` should have been generated for you after your first apply, to now enable the S3 backend simply run:
+
+    ```sh
+    cp backend.tf.dist backend.tf
+    terraform init -backend-config=backend.hcl
+    ```
+  
 
 If this is not your first run, use `terraform init -backend-config=backend.hcl` if you're migrating to an S3 backend or using an existing one.
 
-For full instructions including how to migrate to an S3 backend from an initial run (highly recommended), see the [README](iac/terraform/environments/README.md) in the `iac/terraform/environments` directory.
+
 
 ## Acknowledgements
 * [Gin Gonic](https://github.com/gin-gonic/gin) for the web framework.
