@@ -20,9 +20,9 @@ jobs:
   BuildAndPush:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/build-and-push
+      - uses: ../.github/actions/container-build
         with:
-          aws_region: 
+          aws_region: ${{ env.AWS_REGION }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           ecr_url: ${{ env.ECR_URL }}
