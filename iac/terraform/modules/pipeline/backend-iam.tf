@@ -15,8 +15,8 @@ resource "aws_iam_policy" "terraform_state_access" {
           "s3:ListBucket"
         ],
         Resource = [
-          "${var.backend.s3_bucket_arn}",               # Bucket itself
-          "${var.backend.s3_bucket_arn}/*"  # All objects in the bucket
+          "${var.backend.s3_bucket_arn}",  # Bucket itself
+          "${var.backend.s3_bucket_arn}/*" # All objects in the bucket
         ]
       }
     ]

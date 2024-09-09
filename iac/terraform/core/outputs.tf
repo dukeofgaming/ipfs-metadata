@@ -28,7 +28,7 @@ locals {
 }
 output "environments" {
   description = "The list of environments"
-  value = local.environments
+  value       = local.environments
 }
 
 # Managed pipeline configuration

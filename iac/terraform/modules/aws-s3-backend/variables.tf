@@ -4,15 +4,15 @@ variable "name" {
 }
 
 variable "bucket_name" {
-  description   = "The name of the S3 bucket to store the Terraform state file"
-  type          = string
-  default       = "s3-bucket"
+  description = "The name of the S3 bucket to store the Terraform state file"
+  type        = string
+  default     = "s3-bucket"
 }
 
 variable "lock_table_name" {
-  description   = "The name of the DynamoDB table to store the Terraform state lock"
-  type          = string
-  default       = "dynamodb-lock-table"
+  description = "The name of the DynamoDB table to store the Terraform state lock"
+  type        = string
+  default     = "dynamodb-lock-table"
 }
 
 variable "region" {

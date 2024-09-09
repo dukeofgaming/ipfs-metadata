@@ -10,7 +10,7 @@ variable "environment_name" {
 
 variable "accounts" {
   description = "The list of accounts to create the IAM users"
-  type        = set(string) 
+  type        = set(string)
 }
 
 variable "tags" {

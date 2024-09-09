@@ -1,25 +1,25 @@
 locals {
-    backends = {
-      for environment_name, environment in local.environments: 
-        environment.name => {
-            bucket          = environment.s3_backend.bucket
-            dynamodb_table  = environment.s3_backend.lock_table
-            key             = "terraform.tfstate"
-            region          = var.region
-        }
+  backends = {
+    for environment_name, environment in local.environments :
+    environment.name => {
+      bucket         = environment.s3_backend.bucket
+      dynamodb_table = environment.s3_backend.lock_table
+      key            = "terraform.tfstate"
+      region         = var.region
     }
+  }
 
-    core_backend = var.setup_core_environment ? {
-        bucket          = local.backends["core"].bucket
-        dynamodb_table  = local.backends["core"].dynamodb_table
-        key             = "terraform.tfstate"
-        region          = var.region
+  core_backend = var.setup_core_environment ? {
+    bucket         = local.backends["core"].bucket
+    dynamodb_table = local.backends["core"].dynamodb_table
+    key            = "terraform.tfstate"
+    region         = var.region
     } : {
-        bucket          = ""
-        dynamodb_table  = ""
-        key             = ""
-        region          = ""
-    }
+    bucket         = ""
+    dynamodb_table = ""
+    key            = ""
+    region         = ""
+  }
 }
 
 resource "null_resource" "update_backend_hcl" {
@@ -42,17 +42,17 @@ resource "null_resource" "update_backend_hcl" {
 }
 resource "null_resource" "update_app_backend_hcl_each" {
   # Filter out 'core' from local.backends if var.setup_core_environment is true
-  for_each = var.update_app_backend_hcl ? { 
-    for environment_name, environment in local.backends : 
-      environment_name => environment if !(var.setup_core_environment && environment_name == "core")
+  for_each = var.update_app_backend_hcl ? {
+    for environment_name, environment in local.backends :
+    environment_name => environment if !(var.setup_core_environment && environment_name == "core")
   } : {}
 
   triggers = {
-    bucket            = "${each.value.bucket}"
-    dynamodb_table    = "${each.value.dynamodb_table}"
-    key               = "${each.value.key}"
-    region            = "${var.region}"
-    environment_name  = "${each.key}"
+    bucket           = "${each.value.bucket}"
+    dynamodb_table   = "${each.value.dynamodb_table}"
+    key              = "${each.value.key}"
+    region           = "${var.region}"
+    environment_name = "${each.key}"
     #always_run = "${timestamp()}"
   }
 
