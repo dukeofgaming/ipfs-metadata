@@ -5,6 +5,7 @@ resource "aws_iam_policy" "pipeline_permissions" {
   policy = data.aws_iam_policy_document.pipeline_permissions.json
 }
 
+
 data "aws_iam_policy_document" "pipeline_permissions" {
   # IAM permissions
   statement {
@@ -15,7 +16,10 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "iam:PassRole",
       "iam:DetachRolePolicy",
       "iam:ListInstanceProfilesForRole",
-      "iam:DeleteRole"
+      "iam:DeleteRole",
+      "iam:CreateRole",
+      "iam:TagRole",
+      "iam:AttachRolePolicy"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -61,11 +65,61 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DeleteSecurityGroup",
       "ec2:DetachInternetGateway",
       "ec2:DeleteInternetGateway",
-      "ec2:DeleteVpc"                
+      "ec2:DeleteVpc",
+      "ec2:CreateVpc",
+      "ec2:CreateTags",
+      "ec2:ModifyVpcAttribute",
+      "ec2:CreateSecurityGroup",          
+      "ec2:AuthorizeSecurityGroupEgress", 
+      "ec2:CreateSubnet",                 
+      "ec2:CreateRouteTable",             
+      "ec2:CreateInternetGateway",        
+      "ec2:DeleteNetworkAclEntry",
+      "ec2:RunInstances",
+      "ec2:AttachInternetGateway",
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:CreateNetworkAclEntry",
+      "ec2:AllocateAddress",                 
+      "ec2:CreateRoute",                     
+      "ec2:CreateNetworkInsightsPath",
+      "ec2:CreateNatGateway",
+      "ec2:StartNetworkInsightsAnalysis"
     ]
     resources = ["*"]
     effect    = "Allow"
   }
+
+    # Tiros permissions for Network Insights
+  statement {
+    actions = [
+      "tiros:CreateQuery",
+      "tiros:StartQuery",                 
+      "tiros:CreateRoute",                
+      "tiros:ListPaths",                  
+      "tiros:ReadPermissions",
+      "tiros:ModifyPermissions",
+      "tiros:StartAnalysis",              
+      "tiros:StartExecution",             
+      "tiros:ExecuteAnalysis",
+      "tiros:ViewResults",                
+      "tiros:ListExecutions",
+      "tiros:CreatePermissionsBoundary",  
+      "tiros:ListPermissions",            
+      "tiros:DescribePermissionsBoundary",
+      "tiros:StopExecution",
+      "tiros:ViewNetworkInsightsResults",  
+      "tiros:DeleteNetworkInsightsAnalysis", 
+      "tiros:DeleteAnalysis",             
+      "tiros:StartNetworkInsightsAnalysis",  
+      "tiros:ViewNetworkInsightsPaths",  # To ensure visibility of paths
+      "tiros:DescribeNetworkInsightsResults", # To describe results
+      "tiros:StartNetworkAnalysis" # Added in case of role-specific start
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
+
+
 
   # Elastic Load Balancing permissions
   statement {
@@ -78,7 +132,13 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "elasticloadbalancing:DescribeListeners",
       "elasticloadbalancing:DeleteListener",
       "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:DeleteLoadBalancer"
+      "elasticloadbalancing:DeleteLoadBalancer",
+      "elasticloadbalancing:CreateLoadBalancer",
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:CreateTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:CreateListener"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -96,7 +156,9 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ecs:UpdateService",
       "ecs:DeleteService", 
       "ecs:PutClusterCapacityProviders",
-      "ecs:DeleteCluster"
+      "ecs:DeleteCluster",
+      "ecs:CreateCluster",
+      "ecs:CreateService"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -107,7 +169,10 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     actions = [
       "logs:DescribeLogGroups",
       "logs:ListTagsForResource",
-      "logs:DeleteLogGroup"
+      "logs:DeleteLogGroup",
+      "logs:CreateLogGroup",
+      "logs:TagResource",
+      "logs:PutRetentionPolicy"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -123,12 +188,18 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "rds:DescribeDBInstances",
       "rds:DeleteDBInstance",
       "rds:DeleteDBParameterGroup",
-      "rds:DeleteDBSubnetGroup"
+      "rds:DeleteDBSubnetGroup",
+      "rds:CreateDBParameterGroup",
+      "rds:AddTagsToResource",
+      "rds:ModifyDBParameterGroup",
+      "rds:CreateDBInstance"
     ]
     resources = ["*"]
     effect    = "Allow"
   }
 }
+
+
 
 
 resource "aws_iam_user_policy_attachment" "pipeline_permissions" {
