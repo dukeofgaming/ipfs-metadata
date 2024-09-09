@@ -10,11 +10,11 @@ on:
       - 'deploy/**'
 
 
-env:
-  AWS_REGION: ${{ vars.AWS_REGION }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  ECR_URL: ${{ secrets.ECR_URL }}
+# env:
+#   AWS_REGION: ${{ vars.AWS_REGION }}
+#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#   ECR_URL: ${{ secrets.ECR_URL }}
 
 jobs:
   BuildAndPush:
@@ -26,10 +26,10 @@ jobs:
       - name: Build and Push Docker Image
         uses: ./.github/actions/container-build
         with:
-          aws_region: ${{ env.AWS_REGION }}
-          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          ecr_url: ${{ env.ECR_URL }}
+          aws_region: ${{ vars.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ecr_url: ${{ vars.ECR_URL }}
 
   RunTerraform:
     runs-on: ubuntu-latest
