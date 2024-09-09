@@ -11,7 +11,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     actions = [
       "iam:GetRole",
       "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies" 
+      "iam:ListAttachedRolePolicies",
+      "iam:PassRole" 
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -39,7 +40,8 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "ec2:DescribeNatGateways",
       "ec2:DescribeVolumes",
       "ec2:DescribeInstanceCreditSpecifications",
-      "ec2:DescribeNetworkInsightsPaths" 
+      "ec2:DescribeNetworkInsightsPaths",
+      "ec2:DescribeNetworkInsightsAnalyses"
     ]
     resources = ["*"]
     effect    = "Allow"
@@ -64,7 +66,11 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     actions = [
       "ecs:DescribeClusters",
       "ecs:DescribeTaskDefinition",
-      "ecs:DescribeServices"
+      "ecs:DescribeServices",
+      "ecs:DeregisterTaskDefinition",
+      "ecs:RegisterTaskDefinition",
+      "ecs:TagResource",
+      "ecs:UpdateService" 
     ]
     resources = ["*"]
     effect    = "Allow"
