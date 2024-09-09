@@ -4,7 +4,7 @@
 usage_tag() {
   echo "Usage: $0 tag [options]"
   echo "Options:"
-  echo "  -d, --date [date]     (Optional) Tag with the specified date. If no date is provided, the current date/time is used (format: YYYY-MM-DD-HH_mm_ss)."
+  echo "  -d, --date [date]     (Optional) Tag with the specified date. If no date is provided, the current date/time is used (format: YYYY/MM/DD/HH_mm_ss)."
   echo "  -c, --current         Update the 'deploy/<branch>/current' tag to the specified deployment."
   echo "  --dry-run             Print the commands instead of executing them."
   echo "  -h, --help            Show this help message."
@@ -34,9 +34,9 @@ tag() {
     case "$1" in
       -d|--date)
         if [ -n "$2" ] && [ "${2#-}" != "$2" ]; then
-          date_flag=$(date "+%Y-%m-%d-%H_%M_%S")
+          date_flag="date/$(date "+%Y/%m/%d/%H_%M_%S")"
         else
-          date_flag="$2"
+          date_flag="date/$2"
           shift
         fi
         shift
@@ -61,7 +61,7 @@ tag() {
 
   # If no date is provided, use the current date/time
   if [ -z "$date_flag" ]; then
-    date_flag=$(date "+%Y-%m-%d-%H_%M_%S")
+    date_flag="date/$(date "+%Y/%m/%d/%H_%M_%S")"
   fi
 
   # Construct the date-based tag
