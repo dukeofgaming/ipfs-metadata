@@ -1,5 +1,5 @@
 resource "aws_iam_policy" "pipeline_permissions" {
-  name        = "PipelinePermissionsPolicy"
+  name        = "PipelinePermissionsPolicy-${var.name}-${var.environment}"
   description = "Policy to grant permissions for pipeline operations"
 
   policy = data.aws_iam_policy_document.pipeline_permissions.json

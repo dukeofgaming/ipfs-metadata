@@ -26,7 +26,7 @@ module "ecr" {
 
 #IAM for pipeline account
 resource "aws_iam_policy" "pipeline_push_ecr" {
-  name        = "ECRPushPolicy"
+  name        = "ECRPushPolicy-${var.name}-${var.environment}"
   description = "Policy to allow pushing to ECR repository"
 
   policy = jsonencode({

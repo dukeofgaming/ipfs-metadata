@@ -1,5 +1,9 @@
 module "pipelines" {
+  # NOTE: For every pipeline definition there should be an environment
+
   for_each = var.pipelines
+  
+  name = each.key
 
   source = "../modules/pipeline"
 

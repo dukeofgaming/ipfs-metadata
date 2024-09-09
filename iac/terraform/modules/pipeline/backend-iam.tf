@@ -1,6 +1,6 @@
 # S3 bucket access policy
 resource "aws_iam_policy" "terraform_state_access" {
-  name        = "TerraformStateS3AccessPolicy"
+  name        = "TerraformStateS3AccessPolicy-${var.name}-${var.environment}"
   description = "Policy to allow access to the Terraform state bucket"
 
   policy = jsonencode({
@@ -30,8 +30,7 @@ resource "aws_iam_user_policy_attachment" "terraform_state_access_attachment" {
 
 # DynamoDB access policy
 resource "aws_iam_policy" "terraform_state_lock_access" {
-
-  name        = "TerraformStateLockDynamoDBAccessPolicy"
+  name        = "TerraformStateLockDynamoDBAccessPolicy-${var.name}-${var.environment}"
   description = "Policy to allow access to the Terraform state lock table"
 
   policy = jsonencode({
@@ -51,6 +50,11 @@ resource "aws_iam_policy" "terraform_state_lock_access" {
       }
     ]
   })
+
+  tags = {
+    Name = "TerraformStateLockDynamoDBAccessPolicy-${var.name}-${var.environment}"
+    Service = "Terraform"
+  }
 }
 
 resource "aws_iam_user_policy_attachment" "terraform_state_lock_access_attachment" {

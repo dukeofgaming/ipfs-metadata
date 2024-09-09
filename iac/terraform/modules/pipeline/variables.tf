@@ -13,6 +13,10 @@ variable "branch" {
   type        = string
 }
 
+variable "name" {
+  description = "The name of the pipeline"
+  type        = string
+}
 
 # AWS
 #TODO: Convert to collection

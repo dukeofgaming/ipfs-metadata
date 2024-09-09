@@ -42,10 +42,10 @@ variable "environment_accounts" {
 
 variable "pipelines" {
   description = "The list of pipelines to deploy"
-  type = map(
-    object({
-      environment : string
-      branch : string
+  type = map(                             # The key is the name of the pipeline
+    object({        
+      environment : string                # The environment to deploy to
+      branch : string                     # The branch to deploy from
 
       # Pipeline must have an account, if none is supplied, one will be created
       aws_iam_user : optional(object({
@@ -55,6 +55,29 @@ variable "pipelines" {
 
     })
   )
+
+  validation {
+    # Validate that the environment attribute exists in var.environments
+    error_message = <<-EOT
+      The pipeline environment must be one of the environments:
+
+      ${join(", ", var.environments)}
+
+      You can have environments without pipelines, but you 
+      cannot have pipelines without environments.
+
+      Please define it in the var.environments in your terraform.tfvars file
+    EOT
+    
+    condition = alltrue([
+      for pipeline_name, pipeline_details in var.pipelines : 
+        contains(
+          var.environments, 
+          pipeline_details.environment
+        )
+    ])
+
+  }
 }
 
 variable "github_repository" {
