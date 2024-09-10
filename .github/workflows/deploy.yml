@@ -1,0 +1,193 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  PrepareEnvironment:
+    name: Prepare Environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set_env.outputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Environment Name
+        id: set_env
+        working-directory: ./iac/scripts
+        run: |
+          # Install jq
+          sudo apt-get install -y jq
+          chmod +x get-branch-environment.sh
+
+          # Call the script and save the output to a variable
+          environment_name=$(./get-branch-environment.sh \
+            ../../.github/branch-environment-map.json \
+          )
+
+          # Set the output
+          echo "::set-output name=environment::[\"$environment_name\"]"
+      
+      - name: Print environment output
+        run: echo "${{ steps.set_env.outputs.environment }}"
+
+  BuildAndPush:
+    name: Build and Push Docker Image
+    needs: PrepareEnvironment
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+    environment: ${{ matrix.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Build and Push Docker Image
+        uses: ./.github/actions/container-build
+        with:
+          aws_region: ${{ vars.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ecr_url: ${{ vars.ECR_URL }}
+  
+  RunTerraform:
+    name: Run Terraform
+    needs: 
+      - PrepareEnvironment
+      - BuildAndPush
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+    environment: ${{ matrix.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Terraform Action
+        uses: ./.github/actions/run-terraform
+        with:
+          aws_region: ${{ vars.AWS_REGION }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          terraform_dir: ./iac/terraform/app
+          ecr_url: ${{ vars.ECR_URL }}
+
+      - name: Tag the deployment
+        working-directory: ./iac/scripts
+        run: |
+          chmod +x ./deployment-tagger.sh
+          
+          ./deployment-tagger.sh tag \
+              --current \
+              --date
+
+  PromotionPR:
+    name: Create promotion PR
+    needs: 
+      - PrepareEnvironment
+      - RunTerraform
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+    environment: ${{ matrix.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create promotion PR
+        working-directory: ./iac/scripts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+
+          echo "Installing jq..."
+          sudo apt-get install -y jq
+
+
+          chmod +x get-branch-promotions.sh
+
+          echo "Getting promotion path..."
+          branch_promoting_to=$(
+            ./get-branch-promotions.sh \
+            ../../.github/branch-promotion-map.json \
+          )
+          echo "Promoting to: $branch_promoting_to"
+
+          current_branch=$(git rev-parse --abbrev-ref HEAD)
+          echo "Current branch: $current_branch"
+          
+          echo "Checking if the PR already exists for branch: ${branch_promoting_to}"
+          pr_number=$(gh pr list --base "$branch_promoting_to" --json number --jq '.[0].number')
+          echo "PR number: $pr_number"
+
+          if [ -n "$pr_number" ]; then
+            # Checkout the PR branch and update it if the PR already exists
+            echo "Updating the existing PR ($pr_number)"
+
+            gh pr checkout "$pr_number"
+            git merge "$current_branch" --no-edit
+            git push
+          else
+            # Create a new PR if it doesn't exist
+            echo "Creating a new PR..."
+
+            chmod +x changes-between-commits.sh
+
+            echo "Getting commit message..."
+            commit_message=$(\
+              ./changes-between-commits.sh \
+                --start-from $branch_promoting_to \
+                --end-at $current_branch \
+            )
+
+            echo "Creating PR..."
+            gh pr \
+              create \
+                --title "Merge dev into main" \
+                --body "$commit_message" \
+                --head "$current_branch" \
+                --base "$branch_promoting_to"
+
+            echo "PR created"
+          fi
+
+        
+
+
+      # - name: Terraform Destroy
+      #   working-directory: ${{ env.TERRAFORM_DIR }}
+      #   run: | 
+      #     terraform destroy \
+      #       -auto-approve
+
+
+  # TagDeployment:
+  #   needs: RunTerraform
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+  #   environment: ${{ matrix.environment }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Tag the deployment
+  #       working-directory: ./iac/scripts
+  #       run: |
+  #         chmod +x ./deploment-tagger.sh
+          
+  #         ./deploment-tagger.sh tag \
+  #             --current \
+  #             --date

@@ -1,1 +1,9 @@
+# Workspace
+.obsidian
 .env
+.env.sh
+
+# Terraform
+.terraform
+backend.hcl
+iac/terraform/core/backend.tf

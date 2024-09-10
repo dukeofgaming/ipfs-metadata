@@ -1,0 +1,4 @@
+bucket          = "<your bucket id>"
+dynamodb_table  = "<Optional: your dynamodb table>"
+key             = "terraform.tfstate"
+region          = "us-east-2"

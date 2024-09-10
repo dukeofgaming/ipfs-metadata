@@ -1,0 +1,34 @@
+# version: '3.9'                              # Deprecated field, left for reference
+
+services:
+
+  #Golang app
+  app:
+    env_file: .env
+    build: .
+    environment:  #Taken from .env file
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    depends_on:
+      - database
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    ports:
+      - "8080:8080"
+
+  #Postgres database
+  database:                                     # Alias for host from app is "database"
+    env_file: .env
+    image: postgres:16.4-bookworm
+
+    environment:  #Taken from .env file
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    restart: always

@@ -14,6 +14,7 @@ This application scrapes NFT metadata from IPFS using a CSV list of IPFS CIDs an
 - Go 1.19 or higher
 - PostgreSQL
 - Docker (for running PostgreSQL in a container, if desired)
+- [jq](https://jqlang.github.io/jq/download/) for handling some JSON configuration (optional, used for GitHub Actions)
 
 ## Setup
 
@@ -34,7 +35,7 @@ docker run --name postgres -e POSTGRES_USER=youruser -e POSTGRES_PASSWORD=yourpa
 ```
 
 ### Step 3: Configure Environment Variables
-Create a .env file in the root directory of the project with the following content:
+Create a .env file (or copy and the .env.dist file) in the root directory of the project with the following content:
 
 env
 ```
@@ -99,6 +100,59 @@ GET /metadata
   "image": "Example Image URL"
 }
 ```
+
+## Running with Docker Compose
+
+### Step 1: Install Docker Compose
+
+Follow the instructions [here](https://docs.docker.com/compose/install/) to install Docker Compose.
+
+### Step 2: Start the Application
+
+Run `docker-compose --build` to start the application. This will:
+
+- Build the application container.
+- Start a PostgreSQL container.
+- Start the application container.
+
+### Step 3: Shut down the application
+
+Run `docker-compose down --volumes` to shut down the application and remove the associated anonymous volumes.
+
+## AWS Infrastructure Setup
+
+You will need Terraform for this, which can be installed from the instructions here [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+
+### Setup / Initialize the `core` state
+
+#### Quickstart
+
+For full instructions including how to migrate to an S3 backend from an initial run (highly recommended), see the [README](iac/terraform/core/README.md) in the `iac/terraform/core` directory.
+
+1. Copy the `.env.sh.dist` file to `.env.sh` and fill in the required values, then run:
+
+    ```sh
+    source .env.sh
+    ```
+
+2. Run terraform
+
+    ```sh
+    terraform init
+    terraform apply
+    ```
+
+3. Copy `backend.tf.dist` to `backend.tf`; a `backend.hcl` should have been generated for you after your first apply, to now enable the S3 backend simply run:
+
+    ```sh
+    cp backend.tf.dist backend.tf
+    terraform init -backend-config=backend.hcl
+    ```
+  
+
+If this is not your first run, use `terraform init -backend-config=backend.hcl` if you're migrating to an S3 backend or using an existing one.
+
+
 
 ## Acknowledgements
 * [Gin Gonic](https://github.com/gin-gonic/gin) for the web framework.
