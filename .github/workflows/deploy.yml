@@ -51,10 +51,10 @@ jobs:
       - name: Build and Push Docker Image
         uses: ./.github/actions/container-build
         with:
-          aws_region: ${{ secrets.AWS_REGION }}
+          aws_region: ${{ vars.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          ecr_url: ${{ secrets.ECR_URL }}
+          ecr_url: ${{ vars.ECR_URL }}
   
   RunTerraform:
     needs: BuildAndPush
@@ -70,11 +70,11 @@ jobs:
       - name: Run Terraform Action
         uses: ./.github/actions/run-terraform
         with:
-          aws_region: ${{ secrets.AWS_REGION }}
+          aws_region: ${{ vars.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          terraform_dir: ${{ env.TERRAFORM_DIR }}
-          ecr_url: ${{ secrets.ECR_URL }}
+          terraform_dir: ./iac/terraform/app
+          ecr_url: ${{ vars.ECR_URL }}
 
       - name: Tag the deployment
         working-directory: ./iac/scripts
