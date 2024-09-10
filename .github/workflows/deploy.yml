@@ -120,7 +120,7 @@ jobs:
           # Get promotion path
           branch_promoting_to=$(
             ./get-branch-promotions.sh \
-              ../../.github/branch-promotions-map.json \
+              ../../.github/branch-promotion-map.json \
           )
           current_branch=$(git rev-parse --short HEAD)
 
