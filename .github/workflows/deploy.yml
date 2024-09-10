@@ -46,12 +46,11 @@ jobs:
           ecr_url: ${{ vars.ECR_URL }}
 
       - name: Tag the deployment
-        working-directory: ./iac/
+        working-directory: ./iac/scripts
         run: |
-          chmod +x ./deploy-tags.sh
+          chmod +x ./deploment-tagger.sh
           
-          ./deploy-tags.sh \
-            tag \
+          ./deploment-tagger.sh tag \
               --current \
               --date
 
