@@ -107,6 +107,8 @@ jobs:
 
       - name: Create promotion PR
         working-directory: ./iac/scripts
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
 
           # Install jq
