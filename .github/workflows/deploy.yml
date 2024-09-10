@@ -80,7 +80,14 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           terraform_dir: ./iac/terraform/app
           ecr_url: ${{ vars.ECR_URL }}
-          environment_name: ${{ matrix.environment }}
+          plan_options: |
+            -var="environment=${{ matrix.environment }}" \
+            -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}"
+
+          apply_options: |
+            -var="environment=${{ matrix.environment }}" \
+            -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}" \
+            -auto-approve
 
       - name: Tag the deployment
         working-directory: ./iac/scripts

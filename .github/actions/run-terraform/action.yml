@@ -14,12 +14,12 @@ inputs:
   terraform_dir:
     description: 'Directory containing Terraform configuration files'
     required: true
-  ecr_url:
-    description: 'ECR URL for the Docker image'
-    required: true
-  environment_name:
-    description: 'Environment name'
-    required: true
+  plan_options:
+    description: 'Extra plan CLI options for Terraform'
+    required: false
+  apply_options:
+    description: 'Extra apply CLI options for Terraform'
+    required: false
 
 runs:
   using: "composite"
@@ -48,15 +48,14 @@ runs:
 
     - name: Terraform Plan
       run: |
-        terraform plan \
-          -var="container_image=${{ inputs.ecr_url }}:$(git rev-parse --short HEAD)"
+        terraform plan ${{ inputs.plan_options }}
+
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
 
     - name: Terraform Apply
       run: | 
-        terraform apply \
-          -var="container_image=${{ inputs.ecr_url }}:$(git rev-parse --short HEAD)" \
-          -auto-approve
+        terraform apply ${{ inputs.apply_options }}
+
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
