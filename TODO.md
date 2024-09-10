@@ -6,22 +6,26 @@ NFT IPFS metadata fetcher.
 
 ### Todo
 
-- [ ] Look into mkdocs  
-- [ ] Move ECR to pipeline module  
-- [ ] Create Github Actions for image build and push  
-- [ ] Create Github Actions for terraform deployment  
+- [ ] Setup secret for database password  
 - [ ] Harden security  
+- [ ] Look into mkdocs  
 - [ ] Add better healthcheck for app LB  
 - [ ] Add ECS task healtcheck  
-- [ ] Setup secret for database password  
-- [ ] Create pipeline module for Github's environments, variables, secrets, etc.  
-- [ ] Move ECR to pipeline module  
 
 ### In Progress
+
+- [ ] Add environment promotion through PRs  
+
+### Testing
 
 
 ### Done ✓
 
+- [x] Move ECR to pipeline module  
+- [x] Create pipeline module for Github's environments, variables, secrets, etc.  
+- [x] Create Github Actions for terraform deployment  
+- [x] Create Github Actions for image build and push  
+- [x] Move ECR to pipeline module  
 - [x] Create Terraform for RDS  
 - [x] Create Terraform for ECS  
 - [x] Create Terraform environment for AWS  
