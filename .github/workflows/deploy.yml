@@ -11,6 +11,7 @@ on:
 
 jobs:
   PrepareEnvironment:
+    name: Prepare Environment
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.set_env.outputs.environment }}
@@ -38,6 +39,7 @@ jobs:
         run: echo "${{ steps.set_env.outputs.environment }}"
 
   BuildAndPush:
+    name: Build and Push Docker Image
     needs: PrepareEnvironment
     runs-on: ubuntu-latest
     strategy:
@@ -57,7 +59,10 @@ jobs:
           ecr_url: ${{ vars.ECR_URL }}
   
   RunTerraform:
-    needs: BuildAndPush
+    name: Run Terraform
+    needs: 
+      - PrepareEnvironment
+      - BuildAndPush
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -85,30 +90,77 @@ jobs:
               --current \
               --date
 
+  PromotionPR:
+    name: Create promotion PR
+    needs: 
+      - PrepareEnvironment
+      - RunTerraform
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+    environment: ${{ matrix.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create promotion PR
+        working-directory: ./iac/scripts
+        run: |
+
+          # Install jq
+          sudo apt-get install -y jq
+
+          # Get the branch to promote to
+          chmod +x get-branch-promotions.sh
+
+          # Get promotion path
+          branch_promoting_to=$(
+            ./get-branch-promotions.sh \
+              ../../.github/branch-promotions-map.json \
+          )
+          current_branch=$(git rev-parse --short HEAD)
+
+
+          # Check if the PR already exists
+          pr_number=$(gh pr list --base "$branch_promoting_to" --json number --jq '.[0].number')
+
+          if [ -n "$pr_number" ]; then
+            # Checkout the PR branch and update it if the PR already exists
+            echo "Updating the existing PR with number $pr_number"
+
+            gh pr checkout "$pr_number"
+            git merge "$current_branch" --no-edit
+            git push
+          else
+            # Create a new PR if it doesn't exist
+            echo "Creating a new PR"
+
+            chmod +x changes-between-commits.sh
+
+            commit_message=$(\
+              ./changes-between-commits \
+                --start-from $branch_promoting_to \
+                --end-at $current_branch \
+            )
+
+            gh pr \
+              create \
+                --title "Merge dev into main" \
+                --body "$commit_message" \
+                --head "$current_branch" \
+                --base "$branch_promoting_to" \
+          fi
+
+        
+
 
       # - name: Terraform Destroy
       #   working-directory: ${{ env.TERRAFORM_DIR }}
       #   run: | 
       #     terraform destroy \
       #       -auto-approve
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   # TagDeployment:
