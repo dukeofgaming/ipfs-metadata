@@ -1,0 +1,5 @@
+{
+    "environment"       : "dev",
+    "container_image"   : "371941937463.dkr.ecr.us-east-2.amazonaws.com/nft-ipfs-metadata-dev:latest",
+    "container_port"    : 8080
+}

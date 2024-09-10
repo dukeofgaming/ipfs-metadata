@@ -24,7 +24,6 @@ variable "container_image" {
 variable "container_port" {
   description = "The port the container listens on"
   type        = number
-  default     = 80
 }
 
 #TODO: Implement "valueFrom" for AWS Secrets Manager
@@ -40,6 +39,7 @@ variable "ecs_circuit_breaker" {
     enable : optional(bool, true)
     rollback : optional(bool, true)
   })
+  default = {}
 }
 
 # RDS

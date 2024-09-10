@@ -6,6 +6,7 @@ NFT IPFS metadata fetcher.
 
 ### Todo
 
+- [ ] Environment release promotion PRs ADR  
 - [ ] Setup secret for database password  
 - [ ] Harden security  
 - [ ] Look into mkdocs  
@@ -14,6 +15,7 @@ NFT IPFS metadata fetcher.
 
 ### In Progress
 
+- [ ] Split-off machine and local Terraform configuration  
 - [ ] Add environment promotion through PRs  
 
 ### Testing
