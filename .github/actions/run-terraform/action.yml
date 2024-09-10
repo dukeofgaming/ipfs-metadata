@@ -14,6 +14,9 @@ inputs:
   terraform_dir:
     description: 'Directory containing Terraform configuration files'
     required: true
+  init_options:
+    description: 'Extra plan CLI options for Terraform'
+    required: false
   plan_options:
     description: 'Extra plan CLI options for Terraform'
     required: false
@@ -40,22 +43,20 @@ runs:
         terraform_version: "1.9.5"
 
     - name: Terraform Init
-      run: |
-        terraform init \
-          -backend-config="backend-${{ inputs.environment_name }}.hcl"
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
+      run: |
+        terraform init ${{ inputs.init_options }}
+        
 
     - name: Terraform Plan
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
       run: |
         terraform plan ${{ inputs.plan_options }}
 
+    - name: Terraform Apply
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
-
-    - name: Terraform Apply
       run: | 
         terraform apply ${{ inputs.apply_options }}
-
-      working-directory: ${{ inputs.terraform_dir }}
-      shell: bash
