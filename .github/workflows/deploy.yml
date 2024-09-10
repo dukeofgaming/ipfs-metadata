@@ -5,14 +5,36 @@ on:
     branches:
       - main
       - dev
-
-    tags-ignore:
-      - 'deploy/**'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  BuildAndPush:
+  PrepareEnvironment:
     runs-on: ubuntu-latest
-    environment: dev
+    outputs:
+      environment: ${{ steps.set_env.outputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Environment Name
+        id: set_env
+        working-directory: ./iac/scripts
+        run: |
+          # Install jq
+          sudo apt-get install -y jq
+          chmod +x get-branch-environment.sh
+
+          echo "environment=$(./get-branch-environment.sh ../branch-environment-map.json)" >> $GITHUB_ENV
+  
+  BuildAndPush:
+    needs: PrepareEnvironment
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+    environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,18 +42,17 @@ jobs:
       - name: Build and Push Docker Image
         uses: ./.github/actions/container-build
         with:
-          aws_region: ${{ vars.AWS_REGION }}
+          aws_region: ${{ secrets.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          ecr_url: ${{ vars.ECR_URL }}
-
+          ecr_url: ${{ secrets.ECR_URL }}
   RunTerraform:
-    runs-on: ubuntu-latest
-    environment: dev
     needs: BuildAndPush
-    env:
-      TERRAFORM_DIR: ./iac/terraform/app
-
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+    environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,11 +60,11 @@ jobs:
       - name: Run Terraform Action
         uses: ./.github/actions/run-terraform
         with:
-          aws_region: ${{ vars.AWS_REGION }}
+          aws_region: ${{ secrets.AWS_REGION }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           terraform_dir: ${{ env.TERRAFORM_DIR }}
-          ecr_url: ${{ vars.ECR_URL }}
+          ecr_url: ${{ secrets.ECR_URL }}
 
       - name: Tag the deployment
         working-directory: ./iac/scripts
@@ -62,3 +83,40 @@ jobs:
       #       -auto-approve
 
       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # TagDeployment:
+  #   needs: RunTerraform
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+  #   environment: ${{ matrix.environment }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Tag the deployment
+  #       working-directory: ./iac/scripts
+  #       run: |
+  #         chmod +x ./deploment-tagger.sh
+          
+  #         ./deploment-tagger.sh tag \
+  #             --current \
+  #             --date
