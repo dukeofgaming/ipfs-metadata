@@ -14,12 +14,15 @@ inputs:
   terraform_dir:
     description: 'Directory containing Terraform configuration files'
     required: true
-  ecr_url:
-    description: 'ECR URL for the Docker image'
-    required: true
-  environment_name:
-    description: 'Environment name'
-    required: true
+  init_options:
+    description: 'Extra plan CLI options for Terraform'
+    required: false
+  plan_options:
+    description: 'Extra plan CLI options for Terraform'
+    required: false
+  apply_options:
+    description: 'Extra apply CLI options for Terraform'
+    required: false
 
 runs:
   using: "composite"
@@ -40,23 +43,20 @@ runs:
         terraform_version: "1.9.5"
 
     - name: Terraform Init
-      run: |
-        terraform init \
-          -backend-config="backend-${{ inputs.environment_name }}.hcl"
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
+      run: |
+        terraform init ${{ inputs.init_options }}
+        
 
     - name: Terraform Plan
-      run: |
-        terraform plan \
-          -var="container_image=${{ inputs.ecr_url }}:$(git rev-parse --short HEAD)"
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
+      run: |
+        terraform plan ${{ inputs.plan_options }}
 
     - name: Terraform Apply
-      run: | 
-        terraform apply \
-          -var="container_image=${{ inputs.ecr_url }}:$(git rev-parse --short HEAD)" \
-          -auto-approve
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
+      run: | 
+        terraform apply ${{ inputs.apply_options }}

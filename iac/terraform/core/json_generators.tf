@@ -18,6 +18,7 @@ locals {
 # Create branch-environment-map.json with branches/patterns as keys
 # and environments as values
 
+#TODO: Refactor to local file resources
 resource "null_resource" "branch_environment_map" {
   
   triggers = {

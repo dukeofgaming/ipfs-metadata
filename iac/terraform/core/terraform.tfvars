@@ -37,7 +37,7 @@ pipelines = {               # The list of pipelines to deploy
       force_push          : false,
       require_pr          : true,
       enforce_on_admins   : false,
-      required_approvals  : 1
+      required_approvals  : 0
     }
   },
 
