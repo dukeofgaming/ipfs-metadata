@@ -76,7 +76,6 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           terraform_dir: ./iac/terraform/app
-          ecr_url: ${{ vars.ECR_URL }}
           init_options: |
             -backend-config="backend-${{ matrix.environment }}.hcl"
 
