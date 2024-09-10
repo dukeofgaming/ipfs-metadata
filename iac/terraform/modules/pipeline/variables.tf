@@ -41,3 +41,13 @@ variable "github_repository" {
   description = "The GitHub repository for the pipeline in a <owner>/<repo> format"
   type        = string
 }
+
+variable "branch_protections" {
+  description = "The branch protections for the pipeline"
+  type        = object({
+    require_pr          : optional(bool, false)
+    force_push          : optional(bool, false)
+    enforce_on_admins   : optional(bool, false)
+    required_approvals  : optional(number, 0)
+  })
+}

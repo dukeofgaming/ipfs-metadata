@@ -45,7 +45,11 @@ variable "pipelines" {
   type = map(                             # The key is the name of the pipeline
     object({        
       environment : string                # The environment to deploy to
-      branch : string                     # The branch to deploy from
+
+      # GItHub 
+      # TODO: dukeofgaming/ipfs-metadata#1
+      branch : string                               # The branch to deploy from
+      branch_protections : optional(map(string),{}) # Map string to allow different native types (0 doesn't cast to false)
 
       # Pipeline must have an account, if none is supplied, one will be created
       aws_iam_user : optional(object({
