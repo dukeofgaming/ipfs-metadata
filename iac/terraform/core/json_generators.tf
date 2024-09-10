@@ -23,7 +23,7 @@ resource "null_resource" "branch_environment_map" {
   triggers = {
     branches_changed      = jsonencode(keys(local.branch_environment_map))
     environments_changed  = jsonencode(values(local.branch_environment_map))
-    always_run = timestamp()
+    # always_run = timestamp()
   }
 
   provisioner "local-exec" {
@@ -38,7 +38,7 @@ resource "null_resource" "branch_promotion_map" {
   triggers = {
     branches_changed      = jsonencode(keys(local.branch_environment_map))
     environments_changed  = jsonencode(values(local.branch_environment_map))
-    always_run = timestamp()
+    # always_run = timestamp()
   }
 
   provisioner "local-exec" {
