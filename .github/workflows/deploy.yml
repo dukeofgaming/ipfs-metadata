@@ -28,7 +28,10 @@ jobs:
 
           #echo "environment=$(./get-branch-environment.sh ../branch-environment-map.json)" >> $GITHUB_ENV
           echo "::set-output name=environment::$(./get-branch-environment.sh ../branch-environment-map.json)"
-          
+      
+      - name: Print environment output
+        run: echo "${{ steps.set_env.outputs.environment }}"
+
   BuildAndPush:
     needs: PrepareEnvironment
     runs-on: ubuntu-latest
