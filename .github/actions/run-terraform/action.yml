@@ -17,6 +17,9 @@ inputs:
   ecr_url:
     description: 'ECR URL for the Docker image'
     required: true
+  environment_name:
+    description: 'Environment name'
+    required: true
 
 runs:
   using: "composite"
@@ -39,7 +42,7 @@ runs:
     - name: Terraform Init
       run: |
         terraform init \
-          -backend-config="backend-${{ github.ref_name }}.hcl"
+          -backend-config="backend-${{ inputs.environment_name }}.hcl"
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
 
