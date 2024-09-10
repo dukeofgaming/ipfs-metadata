@@ -8,6 +8,11 @@ locals {
     for pipeline in values(var.pipelines): 
       pipeline.branch => pipeline.environment
   }
+
+  branch_promotion_map = {
+    for pipeline in values(var.pipelines):
+      pipeline.branch => pipeline.branch_promoting_to
+  }
 }
 
 # Create branch-environment-map.json with branches/patterns as keys
@@ -18,14 +23,28 @@ resource "null_resource" "branch_environment_map" {
   triggers = {
     branches_changed      = jsonencode(keys(local.branch_environment_map))
     environments_changed  = jsonencode(values(local.branch_environment_map))
-    #always_run = timestamp()
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
-    command = <<EOF
+    command = <<-EOF
       echo '${jsonencode(local.branch_environment_map)}' \
-        > branch-environment-map.json
+        > ${var.json_branch_environment_map_path}
     EOF
   }
-  
+}
+
+resource "null_resource" "branch_promotion_map" {
+  triggers = {
+    branches_changed      = jsonencode(keys(local.branch_environment_map))
+    environments_changed  = jsonencode(values(local.branch_environment_map))
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOF
+      echo '${jsonencode(local.branch_promotion_map)}' \
+        > ${var.json_branch_promotion_map_path}
+    EOF
+  }
 }

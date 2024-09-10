@@ -9,8 +9,10 @@ environments = [
 
 pipelines = {               # The list of pipelines to deploy
   "dev" = {                 # The name of the pipeline
-    branch      : "dev"     # The branch to deploy
-    environment : "dev"     # The environment to deploy to
+    environment       : "dev"     # The environment to deploy to
+
+    branch              : "dev"     # The branch to deploy
+    branch_promoting_to : "main"
 
     branch_protections = {  
       force_push          : false,
@@ -26,8 +28,10 @@ pipelines = {               # The list of pipelines to deploy
   # }
 
   "staging" = {
-    branch      : "main"
-    environment : "staging"
+    environment       : "staging"
+
+    branch              : "main"
+    branch_promoting_to : "prod"
 
     branch_protections = {
       force_push          : false,
@@ -41,9 +45,10 @@ pipelines = {               # The list of pipelines to deploy
     environment   : "production"
     
     branch        : "prod"
+
     branch_protections = {
-      force_push          : false,
       require_pr          : true,
+      force_push          : false,
       enforce_on_admins   : true,
       required_approvals  : 1
     }

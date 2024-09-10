@@ -13,6 +13,12 @@ variable "branch" {
   type        = string
 }
 
+variable "branch_promoting_to" {
+  description = "The branch to promote to the environment"
+  type        = string
+  default     = null
+}
+
 variable "name" {
   description = "The name of the pipeline"
   type        = string

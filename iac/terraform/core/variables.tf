@@ -39,7 +39,20 @@ variable "environment_accounts" {
   }
 }
 
+variable "json_branch_environment_map_path" {
+  description = "The path to the branch-environment-map.json file"
+  type        = string
+  default     = "../../../.github/branch-environment-map.json"
+}
 
+variable "json_branch_promotion_map_path" {
+  description = "The path to the branch-promotion-map.json file"
+  type        = string
+  default     = "../../../.github/branch-promotion-map.json"
+  
+}
+
+#TODO: Convert to YAML path to avoid variable definition duplication
 variable "pipelines" {
   description = "The list of pipelines to deploy"
   type = map(                             # The key is the name of the pipeline
@@ -49,6 +62,7 @@ variable "pipelines" {
       # GItHub 
       # TODO: dukeofgaming/ipfs-metadata#1
       branch : string                               # The branch to deploy from
+      branch_promoting_to : optional(string, null)  # The branch to promote to
       branch_protections : optional(map(string),{}) # Map string to allow different native types (0 doesn't cast to false)
 
       # Pipeline must have an account, if none is supplied, one will be created

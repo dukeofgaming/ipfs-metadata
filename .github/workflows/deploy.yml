@@ -45,41 +45,6 @@ jobs:
           terraform_dir: ${{ env.TERRAFORM_DIR }}
           ecr_url: ${{ vars.ECR_URL }}
 
-      # - name: Extract branch name
-      #   shell: bash
-      #   run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: ${{ vars.AWS_REGION }}
-
-      # - name: Setup Terraform
-      #   uses: hashicorp/setup-terraform@v3
-      #   with:
-      #       terraform_version: "1.9.5"
-
-      # - name: Terraform Init
-      #   working-directory: ${{ env.TERRAFORM_DIR }}
-      #   run: |
-      #     terraform init \
-      #       -backend-config="backend-${BRANCH_NAME}.hcl"
-        
-      # - name: Terraform Plan
-      #   working-directory: ${{ env.TERRAFORM_DIR }}
-      #   run: |
-      #     terraform plan \
-      #       -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)"
-
-      # - name: Terraform Apply
-      #   working-directory: ${{ env.TERRAFORM_DIR }}
-      #   run: | 
-      #     terraform apply \
-      #       -var="container_image=${{ vars.ECR_URL }}:$(git rev-parse --short HEAD)" \
-      #       -auto-approve
-
       - name: Tag the deployment
         working-directory: ./iac/
         run: |
