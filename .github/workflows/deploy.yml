@@ -26,8 +26,13 @@ jobs:
           sudo apt-get install -y jq
           chmod +x get-branch-environment.sh
 
-          #echo "environment=$(./get-branch-environment.sh ../branch-environment-map.json)" >> $GITHUB_ENV
-          echo "::set-output name=environment::$(./get-branch-environment.sh ../branch-environment-map.json)"
+          # Call the script and save the output to a variable
+          environment_name=$(./get-branch-environment.sh \
+            ../../.github/branch-environment-map.json \
+          )
+
+          # Set the output
+          echo "::set-output name=environment::[\"$environment_name\"]"
       
       - name: Print environment output
         run: echo "${{ steps.set_env.outputs.environment }}"

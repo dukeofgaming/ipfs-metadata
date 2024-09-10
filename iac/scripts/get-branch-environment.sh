@@ -54,8 +54,8 @@ find_environment_and_workspace() {
   # Export TF_WORKSPACE so that it is available if the script is sourced
   export TF_WORKSPACE="$terraform_workspace"
 
-  # Output the environment as a JSON array with one element (but don't echo TF_WORKSPACE)
-  echo "[\"$environment\"]"
+  # Output the environment name (but don't echo TF_WORKSPACE)
+  echo "$environment"
 }
 
 # Call the function with the provided JSON file and branch
