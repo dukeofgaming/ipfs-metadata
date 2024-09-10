@@ -142,7 +142,7 @@ jobs:
 
             echo "Getting commit message..."
             commit_message=$(\
-              ./changes-between-commits \
+              ./changes-between-commits.sh \
                 --start-from $branch_promoting_to \
                 --end-at $current_branch \
             )
