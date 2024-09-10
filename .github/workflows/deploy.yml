@@ -48,9 +48,9 @@ jobs:
       - name: Tag the deployment
         working-directory: ./iac/scripts
         run: |
-          chmod +x ./deploment-tagger.sh
+          chmod +x ./deployment-tagger.sh
           
-          ./deploment-tagger.sh tag \
+          ./deployment-tagger.sh tag \
               --current \
               --date
 
