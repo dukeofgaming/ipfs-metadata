@@ -146,6 +146,7 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "elasticloadbalancing:ModifyLoadBalancerAttributes",
       "elasticloadbalancing:CreateTargetGroup",
       "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:ModifyTargetGroup",
       "elasticloadbalancing:CreateListener",
     ]
     resources = ["*"]

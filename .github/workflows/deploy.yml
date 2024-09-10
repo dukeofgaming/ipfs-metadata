@@ -111,22 +111,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
 
-          # Install jq
+          echo "Installing jq..."
           sudo apt-get install -y jq
 
-          # Get the branch to promote to
+
           chmod +x get-branch-promotions.sh
 
-          # Get promotion path
+          echo "Getting promotion path..."
           branch_promoting_to=$(
             ./get-branch-promotions.sh \
-              ../../.github/branch-promotion-map.json \
-          )
-          current_branch=$(git rev-parse --short HEAD)
+            ../../.github/branch-promotion-map.json \
+            )
+            current_branch=$(git rev-parse --short HEAD)
 
-
-          # Check if the PR already exists
-          pr_number=$(gh pr list --base "$branch_promoting_to" --json number --jq '.[0].number')
+            echo "Checking if the PR already exists..."
+            pr_number=$(gh pr list --base "$branch_promoting_to" --json number --jq '.[0].number')
 
           if [ -n "$pr_number" ]; then
             # Checkout the PR branch and update it if the PR already exists
@@ -141,18 +140,22 @@ jobs:
 
             chmod +x changes-between-commits.sh
 
+            echo "Getting commit message..."
             commit_message=$(\
               ./changes-between-commits \
                 --start-from $branch_promoting_to \
                 --end-at $current_branch \
             )
 
+            echo "Creating PR..."
             gh pr \
               create \
                 --title "Merge dev into main" \
                 --body "$commit_message" \
                 --head "$current_branch" \
-                --base "$branch_promoting_to" \
+                --base "$branch_promoting_to"
+
+            echo "PR created"
           fi
 
         
