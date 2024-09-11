@@ -118,7 +118,7 @@ jobs:
           
 
   PromotionPR:
-    if: ${{ needs.PrepareEnvironment.outputs.environment == '["prod"]' }}
+    if: ${{ needs.PrepareEnvironment.outputs.environment != '["prod"]' }}
     name: Create promotion PR
     needs: 
       - PrepareEnvironment
