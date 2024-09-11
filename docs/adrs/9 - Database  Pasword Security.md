@@ -28,8 +28,8 @@ graph
             
         end
 
-        UnencryptedState-- stored in --> RDSPasswordSecretVersion
-        UnencryptedState-- exposed in state --> RDS
+        RDSPasswordSecretVersion -- stored in --> UnencryptedState
+        RDSPasswordSecretVersion-- updates --> RDS
         RDSPasswordSecret -- consumed securely by --> ECS
 
         RDSPasswordEnvSecret -- sent securely --> UnencryptedState
@@ -40,12 +40,13 @@ graph
     end
 
     Admin -- updates secret --> RDSPasswordEnvSecret
-    CoreTerraformState -- creates --> RDSPasswordSecret
+    Admin -- can access --> UnencryptedState
+    CoreTerraformState -- references --> UnencryptedState
 
 
 ```
 
-In this design the main attack vector is the password being exposed as plain text in the state file even if the application is consuming it securely.
+In this design the main attack vector is the password being exposed as plain text in the state file even if the application is consuming it securely. The attack vector being the admin having access to the state file.
 
 The `production` environment will need to have an encrypted terraform state to prevent the password from being exposed.
 
