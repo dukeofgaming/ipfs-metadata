@@ -28,7 +28,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attach
 
 ## Secrets Manager Policy
 resource "aws_iam_policy" "ecs_secrets_policy" {
-  name = "ecs-secrets-access-policy"
+  name = "ecs-secrets-access-policy-${local.environment}"
 
   policy = jsonencode({
     Version = "2012-10-17",
