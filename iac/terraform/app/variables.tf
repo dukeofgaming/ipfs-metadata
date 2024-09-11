@@ -73,3 +73,15 @@ variable "database_port" {
   type        = number
   default     = 5432
 }
+
+variable "healthcheck_endpoint" {
+  description = "The endpoint to use for the healthcheck"
+  type        = string
+  default     = "/healthcheck"
+}
+
+variable "healtcheck_matcher" {
+  description = "The matcher to use for the healthcheck"
+  type        = string
+  default     = "200"
+}
