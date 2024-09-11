@@ -185,6 +185,12 @@ jobs:
             echo "PR created"
           fi
 
+          pr_number=$(gh pr list --base "$branch_promoting_to" --json number --jq '.[0].number')
+          pr_url="${{ github.repository }}/pull/${pr_number"
+          pr_md_link="[Promote these changes to $branch_promoting_to]($pr_link})"
+          
+          echo "🚀 $pr_md_link" >> $GITHUB_STEP_SUMMARY
+
       
 
       # - name: Terraform Destroy
