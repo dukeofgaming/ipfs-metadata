@@ -89,7 +89,7 @@ If this is not your first run, use `terraform init -backend-config=backend.hcl` 
 
 #### Quickstart
 
-For full instructions including how to migrate to an S3 backend from an initial run (highly recommended), see the [README](iac/terraform/core/README.md) in the `iac/terraform/core` directory.
+For full instructions including how to migrate to an S3 backend from an initial run (highly recommended), see the [README](iac/terraform/app/README.md) in the `iac/terraform/app` directory.
 
 1. Copy the `.env.sh.dist` file to `.env.sh` and fill in the required values, then run:
 
