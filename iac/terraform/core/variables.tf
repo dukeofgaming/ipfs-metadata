@@ -15,7 +15,7 @@ variable "environments" {
   default     = ["dev"]
 }
 
-variable "update_backend_hcl" {
+variable "update_core_backend_hcl" {
   description = "The flag to update the backend configuration"
   type        = bool
   default     = true
