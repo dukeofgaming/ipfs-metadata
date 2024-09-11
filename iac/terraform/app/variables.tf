@@ -9,7 +9,7 @@ variable "project" {
   type        = string
 }
 
-variable "version" {
+variable "app_version" {
   description = "The version of the application"
   type        = string
   default     = "TERRAFORM_INITIALIZED"
