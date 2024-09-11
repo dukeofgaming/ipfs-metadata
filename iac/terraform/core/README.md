@@ -3,6 +3,13 @@ This module will help you create the state backend and service accounts you need
 # Setup
 ## Initial Setup
 
+> **NOTE**: Be sure to change  the `terraform.tfvars` value for your repository first, and make a commit
+>
+> ```hcl
+> github_repository = "dukeofgaming/ipfs-metadata"
+> ```
+>
+
 1. Copy the `.env.sh.dist` file to `.env.sh` and fill in the required values, then run:
 
     ```sh
