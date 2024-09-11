@@ -9,6 +9,12 @@ variable "project" {
   type        = string
 }
 
+variable "app_version" {
+  description = "The version of the application"
+  type        = string
+  default     = "TERRAFORM_INITIALIZED"
+}
+
 variable "environment" {
   description = "The environment to deploy the application"
   type        = string

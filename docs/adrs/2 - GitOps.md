@@ -18,6 +18,10 @@ The assumptions are that:
 
 Adopt GitOps with GitHub for infrastructure environment management, deployments and promotion using a simple implementation that can scale with the project. 
 
+GitOps essentially means that the infrastructure is managed through Git, and changes are made through pull requests. In this model, our branches represent environments, and the promotion process is a simple merge.
+
+Furthermore, communication on deployments done through tags, which later in the future can be used for managing rollback strategies, for example, by using GitHub Actions.
+
 
 ```mermaid
 graph 
@@ -153,17 +157,28 @@ The promoetion from `dev` to `prod` will be handled by a simple merge, where the
 gitGraph 
 
     commit
+    commit
+    commit
 
     branch dev
     checkout dev
     commit
-    commit tag: "dev-deploy"
+    commit
+    commit
+    commit tag: "deploy/dev/current"
 
     checkout main
-    merge dev tag: "prod-deploy"
 
+    merge dev tag: "deploy/staging/current"
+    commit
+    commit
+    commit
+    commit
+
+    branch prod
+    checkout prod
+    commit tag: "deploy/prod/current"
 ```
-
 
 ## Consequences
 

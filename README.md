@@ -17,19 +17,21 @@ This application scrapes NFT metadata from IPFS using a CSV list of IPFS CIDs an
 - [jq](https://jqlang.github.io/jq/download/) for handling some JSON configuration (optional, used for GitHub Actions)
 ## 🚀 New Features
 
-- **Containerization for Local Development**: Utilizes Docker Compose for easy setup and teardown of the development environment. See [ADR 1](docs/adrs/1%20-%20Docker%20Compose%20for%20local%20development.md).
+- 🐳 **Containerization for Local Development**: Utilizes Docker Compose for easy setup and teardown of the development environment. See [ADR 1](docs/adrs/1%20-%20Docker%20Compose%20for%20local%20development.md).
 
-- **GitOps Workflow**: Implements a GitOps workflow for secure and automated infrastructure deployment. See [ADR 2](docs/adrs/2%20-%20GitOps.md).
+- 🚑 **Health Check Endpoint**: A new `/healthcheck` endpoint checks database connectivity and returns the application's version, improving load balancer integration. See [ADR 10](docs/adrs/10%20-%20Healtcheck%20endpoint.md).
 
-- **Distroless Containers**: For production, uses distroless containers to minimize attack surfaces. See [ADR 5](docs/adrs/5%20-%20Distroless%20Container.md).
+- 🏗️ **Terraform Infrastructure**: Infrastructure as Code using Terraform for reproducible and scalable cloud environments. See [ADR 2](docs/adrs/2%20-%20GitOps.md) for GitOps and [ADR 3](docs/adrs/3%20-%20ECS.md) for ECS specifics.
 
-- **Terraform Infrastructure**: Infrastructure as Code using Terraform for reproducible and scalable cloud environments. See [ADR 2](docs/adrs/2%20-%20GitOps.md) for GitOps and [ADR 3](docs/adrs/3%20-%20ECS.md) for ECS specifics.
+- 🔐 **Secure Database Password Handling**: Securely manages database passwords, avoiding plain text exposure. See [ADR 9](docs/adrs/9%20-%20Database%20Pasword%20Security.md).
 
-- **Secure Database Password Handling**: Securely manages database passwords, avoiding plain text exposure. See [ADR 9](docs/adrs/9%20-%20Database%20Pasword%20Security.md).
+- 🛡️ **Distroless Containers**: For production, uses distroless containers to minimize attack surfaces. See [ADR 5](docs/adrs/5%20-%20Distroless%20Container.md). Not to mention, the final image is super-lightweight at only ***7.29MB***💨.
 
-- **Least Privilege Pipeline**: Ensures the CI/CD pipeline operates with the least privilege necessary, enhancing security. See [ADR 7](docs/adrs/7%20-%20Least%20Privileged%20pipeline%20with%20good%20DevEx.md).
+- 🔄 **GitOps Workflow**: Implements a GitOps workflow for secure and automated infrastructure deployment. See [ADR 2](docs/adrs/2%20-%20GitOps.md).
 
-- **Health Check Endpoint**: A new `/healthcheck` endpoint checks database connectivity and returns the application's version, improving load balancer integration. See [ADR 10](docs/adrs/10%20-%20Healtcheck%20endpoint.md).
+- 🔑 **Least Privilege Pipeline**: Ensures the CI/CD pipeline operates with the least privilege necessary, enhancing security. See [ADR 7](docs/adrs/7%20-%20Least%20Privileged%20pipeline%20with%20good%20DevEx.md).
+
+- 🤖 **Machine-Generated Config Files**: Simplifies setup and ensures consistency with machine-generated HCL and JSON configuration files managed by Terraform. See [ADR 8](docs/adrs/8%20-%20Machine%20configuration%20files.md).
 
 
 ## Running with Docker Compose
@@ -110,7 +112,16 @@ For full instructions including how to migrate to an S3 backend from an initial 
     terraform apply
     ```
 
-    
+#### Changing the RDS password
+
+Once you have deployed both projects and got at least one succesful build in Github Actions, you can change the RDS password by following these steps:
+
+1. Go to your GitHub repository **Settings**
+2. Navigate to **Environments**
+3. Click on the environment you want to change the password for.
+4. Look for the `RDS_MASTER_PASSWORD` secret and click on the "Update" button, enter a new password, then save.
+5. Go to your latest succesful build for that environment and click on the "Re-run jobs" button.
+6. Make sure the ECS task has restarded and you have a new container running.
 
 ## Running without a container
 
