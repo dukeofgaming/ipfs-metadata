@@ -149,28 +149,18 @@ jobs:
             # Create a new PR if it doesn't exist
             echo "Creating a new PR..."
 
-            chmod +x changes-between-commits.sh
-
-            echo "Getting commit message..."
-            commit_message=$(\
-              ./changes-between-commits.sh \
-                --start-from $branch_promoting_to \
-                --end-at $current_branch \
-            )
-
             echo "Creating PR..."
             gh pr \
               create \
-                --title "Merge dev into main" \
-                --body "$commit_message" \
+                --title "Merge $current_branch into $branch_promoting_to" \
+                --body "Changes bellow:" \
                 --head "$current_branch" \
                 --base "$branch_promoting_to"
 
             echo "PR created"
           fi
 
-        
-
+      
 
       # - name: Terraform Destroy
       #   working-directory: ${{ env.TERRAFORM_DIR }}
