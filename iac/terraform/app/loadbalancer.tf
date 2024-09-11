@@ -1,6 +1,9 @@
+resource "random_id" "random_alb_suffix" {
+  byte_length = 4
+}
 
 resource "aws_lb" "alb" {
-  name               = var.project
+  name               = "alb-${random_id.random_database_suffix.hex}"
   internal           = false
   load_balancer_type = "application"
 
