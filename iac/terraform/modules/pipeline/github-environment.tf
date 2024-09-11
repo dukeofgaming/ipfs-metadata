@@ -10,6 +10,7 @@ locals {
   environment_secrets = {
     AWS_ACCESS_KEY_ID     = aws_iam_access_key.this.id
     AWS_SECRET_ACCESS_KEY = aws_iam_access_key.this.secret
+    RDS_MASTER_PASSWORD   = "INITIALIZED_BY_GITHUB"
   }
 }
 resource "github_actions_environment_secret" "pipeline_secrets" {
