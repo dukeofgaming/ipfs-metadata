@@ -8,6 +8,8 @@ on:
       - prod
 
 jobs:
+  #TODO: Get rid of set-output 
+  #       https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
   PrepareEnvironment:
     name: Prepare Environment
     runs-on: ubuntu-latest
@@ -70,6 +72,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      #TODO: Add dynamic action outputs for being able 
+      #       to get values from terraform output so that we can present
+      #       them in the summary
       - name: Run Terraform Action
         uses: ./.github/actions/run-terraform
         with:

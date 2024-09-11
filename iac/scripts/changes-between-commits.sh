@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#TODO: Delete, not worth the trouble
+
 # Function to show usage
 usage() {
   echo "Usage: $0 --start-from <commit|branch|tag> --end-at <commit|branch|tag>"
