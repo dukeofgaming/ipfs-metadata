@@ -26,4 +26,25 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attach
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-#TODO: Add Task Execution policy for RDS access
+## Secrets Manager Policy
+resource "aws_iam_policy" "ecs_secrets_policy" {
+  name = "ecs-secrets-access-policy-${local.environment}"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = [
+          "secretsmanager:GetSecretValue"
+        ],
+        Effect   = "Allow",
+        Resource = aws_secretsmanager_secret.rds_master_password.arn
+      }
+    ]
+  })
+}
+# Policy Attachment - Secrets Manager Policy
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attach" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.ecs_secrets_policy.arn
+}

@@ -12,6 +12,6 @@ EKS was considered as an option, however, Kubernetes would add operational compl
 ## Consequences
 
 1. ECS is a managed service, so it will require less operational overhead.
-2. ECS integrates easier to other AWS services than EKS (e.g. CloudWatch).
+2. ECS integrates easier to other AWS services than EKS (e.g. CloudWatch, Secrets Manager).
 3. ECS introduces less networking layers than EKS.
 4. CICD pipelines can be simpler with ECS, relying only on Terraform.

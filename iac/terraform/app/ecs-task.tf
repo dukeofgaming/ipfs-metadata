@@ -9,12 +9,13 @@ locals {
       "POSTGRES_HOST"     = local.split_database_host_port[0]
       "POSTGRES_USER"     = local.database_username
       "POSTGRES_DB"       = local.database_name
-      "POSTGRES_PASSWORD" = var.database_password
+      # "POSTGRES_PASSWORD" = var.database_password               #TODO: Replace with AWS Secrets Manager
       "POSTGRES_PORT"     = local.split_database_host_port[1]
     }
   )
 }
 
+# https://docs.aws.amazon.com/AmazonECS/latest/developerguide/secrets-envvar-secrets-manager.html
 resource "aws_ecs_task_definition" "this" {
 
   family = "family-of-${var.project}-${local.environment}-tasks"
@@ -55,6 +56,11 @@ resource "aws_ecs_task_definition" "this" {
             value : value
           }
         ]),
+
+        secrets: [{
+          name      : "POSTGRES_PASSWORD",
+          valueFrom : aws_secretsmanager_secret.rds_master_password.arn
+        }]
 
         # AWS Integrations
         logConfiguration : {
