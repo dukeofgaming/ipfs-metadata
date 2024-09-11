@@ -14,6 +14,7 @@ jobs:
     name: Prepare Environment
     runs-on: ubuntu-latest
     outputs:
+      environment_json: ${{ steps.set_env.outputs.environment }}
       environment: ${{ steps.set_env.outputs.environment }}
     steps:
       - name: Checkout
@@ -33,7 +34,9 @@ jobs:
           )
 
           # Set the output
-          echo "::set-output name=environment::[\"$environment_name\"]"
+          echo "name=environment_json=[\"$environment_name\"]" >> $GITHUB_OUTPUT
+          echo "name=environment=$(echo '${{ toJson(github.event.inputs.environment) }}' | jq -r '.[0]')" >> $GITHUB_OUTPUT
+
       
       - name: Print environment output
         run: echo "${{ steps.set_env.outputs.environment }}"
@@ -44,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
@@ -66,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
@@ -118,7 +121,7 @@ jobs:
           
 
   PromotionPR:
-    if: ${{ needs.PrepareEnvironment.outputs.environment != '["prod"]' }}
+    if: ${{ needs.PrepareEnvironment.outputs.environment != 'prod' }}
     name: Create promotion PR
     needs: 
       - PrepareEnvironment
@@ -126,7 +129,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
 
     steps:
