@@ -63,9 +63,11 @@ graph LR
 1. The `terraform.tfvars` file will be the default file for all environments.
 2. The `terraform.tfvars.json` file will be used for developers to modify locally, after copying it from the `terraform-<environment>.tfvars.json` file.
 3. The pipeline will only set values through `-var` flags, avoiding confusion.
-4. The terraform state will always hold a copy of the last environment-specific configuration:
+4. The terraform state will always hold a copy of the last environment-specific configuration, which means that if the one from the person applying the plan differs, it will be overwritten:
     
     1. Helping to detect what was the last image used.
     2. Helping to detect if terraform was applied to the wrong environment.
     3. Making it easy for developers to update their local configuration.
+
+5. The script `switch-environment` was created for safe environment switching, which knows to modify the `terraform.tfvars.json` file with the correct environment value.
 
