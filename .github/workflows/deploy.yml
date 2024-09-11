@@ -76,6 +76,7 @@ jobs:
       #       to get values from terraform output so that we can present
       #       them in the summary
       - name: Run Terraform Action
+        id: terraform_action
         uses: ./.github/actions/run-terraform
         with:
           aws_region: ${{ vars.AWS_REGION }}
@@ -105,6 +106,16 @@ jobs:
           ./deployment-tagger.sh tag \
               --current \
               --date
+
+      - name: Add to build summary
+        shell: bash
+        run: |
+          terraform_output='${{ steps.terraform_action.outputs.terraform_output }}'
+          lb_url=$(echo "$terraform_output" | jq -r '.lb_url.value')
+          
+          echo "LB URL: $lb_url"
+          echo "🌐 [Application URL]($lb_url)" >> $GITHUB_STEP_SUMMARY
+          
 
   PromotionPR:
     name: Create promotion PR
