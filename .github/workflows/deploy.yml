@@ -114,7 +114,7 @@ jobs:
           lb_url=$(echo "$terraform_output" | jq -r '.lb_url.value')
           
           echo "LB URL: $lb_url"
-          echo "🌐 [Application URL]($lb_url)" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 [Application URL]($lb_url/metadata)" >> $GITHUB_STEP_SUMMARY
           
 
   PromotionPR:
