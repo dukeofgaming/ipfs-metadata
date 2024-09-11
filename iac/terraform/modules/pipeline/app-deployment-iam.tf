@@ -9,7 +9,6 @@ resource "aws_iam_policy" "pipeline_permissions" {
 data "aws_iam_policy_document" "pipeline_permissions" {
   version = "2012-10-17"
 
-  # IAM permissions
   statement {
     actions = [
       "iam:GetRole",
@@ -21,7 +20,11 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "iam:DeleteRole",
       "iam:CreateRole",
       "iam:TagRole",
-      "iam:AttachRolePolicy"
+      "iam:AttachRolePolicy",
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
+      "iam:DeletePolicy"
     ]
     resources = ["*"]
     effect    = "Allow"
