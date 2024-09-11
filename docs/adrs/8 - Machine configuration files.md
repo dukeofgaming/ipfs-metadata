@@ -47,14 +47,14 @@ graph LR
         var_container_image["-var='environment=...'"]
     end
 
-    
-
     var_environment-- overrides --> tfstate
     var_container_image-- overrides --> tfstate
 
     tfstate-- overwrites --> terraform_environment_tfvars_json
 
-
+    style terraform_tfvars stroke:#f00, stroke-width:2px, fill:#300
+    style terraform_environment_tfvars_json stroke:#0f0, stroke-width:2px, fill:#030
+    style terraform_tfvars_json stroke:#f60, stroke-width:2px, fill:#630, stroke-dasharray:5,5
 
 ```
 

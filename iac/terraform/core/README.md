@@ -29,6 +29,8 @@ This module will help you create the state backend and service accounts you need
         1. After the first `terraform apply`, ensure the `backend.hcl` file has been generated with the correct backend configuration. 
         
         2. Copy `backend.tf.dist` to `backend.tf` 
+
+            > NOTE: `backend.tf` is ignored so that you can have a local backend for the core project. Suitable for experimentation.
         
         3. `terraform init -backend-config=backend.hcl` to reinitialize Terraform with the new backend settings.
 

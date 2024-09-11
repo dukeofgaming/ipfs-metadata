@@ -25,7 +25,7 @@ This application scrapes NFT metadata from IPFS using a CSV list of IPFS CIDs an
 
 - 🔐 **Secure Database Password Handling**: Securely manages database passwords, avoiding plain text exposure. See [ADR 9](docs/adrs/9%20-%20Database%20Pasword%20Security.md).
 
-- 🛡️ **Distroless Containers**: For production, uses distroless containers to minimize attack surfaces. See [ADR 5](docs/adrs/5%20-%20Distroless%20Container.md).
+- 🛡️ **Distroless Containers**: For production, uses distroless containers to minimize attack surfaces. See [ADR 5](docs/adrs/5%20-%20Distroless%20Container.md). Not to mention, the final image is super-lightweight at only ***7.29MB***💨.
 
 - 🔄 **GitOps Workflow**: Implements a GitOps workflow for secure and automated infrastructure deployment. See [ADR 2](docs/adrs/2%20-%20GitOps.md).
 
