@@ -24,6 +24,11 @@ inputs:
     description: 'Extra apply CLI options for Terraform'
     required: false
 
+outputs:
+  terraform_output:
+    description: 'Terraform output in an unformatted one-line string'
+    value: ${{ steps.tf_output.outputs.terraform_output }}
+
 runs:
   using: "composite"
   steps:
@@ -60,3 +65,10 @@ runs:
       shell: bash
       run: | 
         terraform apply ${{ inputs.apply_options }}
+
+    - name: Terraform Output
+      id: tf_output
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
+      run: |
+        echo "terraform_output=$(terraform output -json | jq -c)" >> $GITHUB_OUTPUT

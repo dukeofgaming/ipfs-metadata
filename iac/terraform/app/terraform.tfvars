@@ -14,3 +14,9 @@ project = "nft-ipfs-metadata"
 database_name = "nftipfsmetadata"
 
 container_port = 8080
+
+#Turning off the circuit breaker for all environments
+ecs_circuit_breaker = {
+  enable : false
+  rollback : false
+}

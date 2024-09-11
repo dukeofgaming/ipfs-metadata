@@ -58,8 +58,8 @@ variable "database_username" {
 variable "database_password" {
   description = "The master password for the database"
   type        = string
-  #sensitive   = true        #TODO: UNCOMMENT THIS LINE
-  default = "password" #TODO: REMOVE THIS LINE
+  sensitive   = true        
+  default     = "INITIALIZED_BY_TERRAFORM"
 }
 
 variable "database_instance_class" {

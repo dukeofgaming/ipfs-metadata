@@ -6,8 +6,6 @@ NFT IPFS metadata fetcher.
 
 ### Todo
 
-- [ ] Environment release promotion PRs ADR  
-- [ ] Setup secret for database password  
 - [ ] Harden security  
 - [ ] Look into mkdocs  
 - [ ] Add better healthcheck for app LB  
@@ -15,14 +13,16 @@ NFT IPFS metadata fetcher.
 
 ### In Progress
 
-- [ ] Split-off machine and local Terraform configuration  
-- [ ] Add environment promotion through PRs  
+- [ ] Setup secret for database password  
 
 ### Testing
 
 
 ### Done ✓
 
+- [x] Environment release promotion PRs ADR  
+- [x] Add environment promotion through PRs  
+- [x] Split-off machine and local Terraform configuration  
 - [x] Move ECR to pipeline module  
 - [x] Create pipeline module for Github's environments, variables, secrets, etc.  
 - [x] Create Github Actions for terraform deployment  

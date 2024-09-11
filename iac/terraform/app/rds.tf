@@ -26,7 +26,7 @@ resource "aws_db_instance" "database" {
   allocated_storage = 20
   db_name           = local.database_name
   username          = local.database_username
-  password          = var.database_password
+  password          = aws_secretsmanager_secret_version.rds_master_password.secret_string
 
   #publicly_accessible    = false
   skip_final_snapshot = true
