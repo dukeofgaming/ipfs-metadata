@@ -29,5 +29,14 @@ func startAPI(db *sqlx.DB) {
 		c.JSON(http.StatusOK, metadata)
 	})
 
+	router.GET("/healthcheck", func(c *gin.Context) {
+		err := db.Ping()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database is unreachable"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Everything is healthy!"})
+	})
+	
 	router.Run(":8080")
 }
