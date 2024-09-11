@@ -40,6 +40,12 @@ This application scrapes NFT metadata from IPFS using a CSV list of IPFS CIDs an
 
 Follow the instructions [here](https://docs.docker.com/compose/install/) to install Docker Compose.
 
+Clone this repository:
+
+```sh
+git clone git clone https://github.com/dukeofgaming/ipfs-metadata.git
+```
+
 ### Step 2: Start the Application
 
 Run `docker-compose up --build` to start the application. This will:
