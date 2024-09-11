@@ -11,6 +11,7 @@ locals {
       "POSTGRES_DB"       = local.database_name
       # "POSTGRES_PASSWORD" = var.database_password               #TODO: Replace with AWS Secrets Manager
       "POSTGRES_PORT"     = local.split_database_host_port[1]
+      "VERSION"           = var.version
     }
   )
 }

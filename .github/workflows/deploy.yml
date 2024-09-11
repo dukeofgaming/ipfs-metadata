@@ -89,11 +89,13 @@ jobs:
           # TODO: Add reusable input for plan_and_apply_options
           plan_options: |
             -var="environment=${{ matrix.environment }}" \
+            -var="version=${{ github.sha }}" \
             -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}" \
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" 
-
+            
           apply_options: |
             -var="environment=${{ matrix.environment }}" \
+            -var="version=${{ github.sha }}" \
             -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}" \
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" \
             -auto-approve
