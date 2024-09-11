@@ -124,16 +124,21 @@ jobs:
 
           chmod +x get-branch-promotions.sh
 
+          # Check if the command was successful
           echo "Getting promotion path..."
           branch_promoting_to=$(
             ./get-branch-promotions.sh \
             ../../.github/branch-promotion-map.json \
           )
-          echo "Promoting to: $branch_promoting_to"
+          # Check if the command was successful
+          if [ $? -ne 0 ]; then
+            echo "No branch to promote. Exiting gracefully."
+            exit 0
+          fi
 
           current_branch=$(git rev-parse --abbrev-ref HEAD)
           echo "Current branch: $current_branch"
-          
+
           echo "Checking if the PR already exists for branch: ${branch_promoting_to}"
           pr_number=$(gh pr list --base "$branch_promoting_to" --json number --jq '.[0].number')
           echo "PR number: $pr_number"
