@@ -18,6 +18,10 @@ module "environments" {
     ) ? ["pipeline"] : []
   )
 
+  generated_hcl_file_path = each.value == "core" ? (
+    "${path.module}/backend.hcl"
+  ) : "${path.module}/../app/backend-${each.key}.hcl"
+
   tags = merge(
     var.tags,
     {

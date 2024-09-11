@@ -198,15 +198,17 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "secretsmanager:DescribeSecret",
       "secretsmanager:CreateSecret",
       "secretsmanager:PutSecretValue",
-      "secretsmanager:GetSecretValue",        #TODO: See if this is really needed by the pipeline
+      "secretsmanager:GetSecretValue",
       "secretsmanager:DeleteSecret",
       "secretsmanager:UpdateSecret",
       "secretsmanager:ListSecretVersionIds",
-      "secretsmanager:RestoreSecret"
+      "secretsmanager:RestoreSecret",
+      "secretsmanager:TagResource"
     ]
     resources = ["*"]
     effect    = "Allow"
   }
+      
 
   # RDS permissions
   statement {
