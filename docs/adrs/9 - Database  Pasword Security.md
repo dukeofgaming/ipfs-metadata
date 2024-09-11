@@ -14,11 +14,11 @@ The design boils down to:
 - The secret version will be updated by the admin through Github Actions (**this is required for Terraform to change the RDS master password**).
 
 ```mermaid
-graph 
+graph
     subgraph "core"
         CoreTerraformState[("tfstate")]
         subgraph "pipeline"
-            RDSPasswordEnvSecret
+            PipelineServiceAccount
         end
     end
 
@@ -41,7 +41,7 @@ graph
         RDSPasswordSecret -- consumed securely by --> ECS
 
         RDSPasswordEnvSecret -- sent securely --> EncryptedState
-        RDSPasswordEnvSecret -. updates .-> RDSPasswordSecretVersion
+        PipelineServiceAccount -. updates .-> RDSPasswordSecretVersion
 
         style EncryptedState stroke:#f00, stroke-width:2px, fill:#600
         style Admin stroke:#f00, stroke-width:2px, fill:#600
