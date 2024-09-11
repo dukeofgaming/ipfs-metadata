@@ -112,7 +112,16 @@ For full instructions including how to migrate to an S3 backend from an initial 
     terraform apply
     ```
 
-    
+#### Changing the RDS password
+
+Once you have deployed both projects and got at least one succesful build in Github Actions, you can change the RDS password by following these steps:
+
+1. Go to your GitHub repository **Settings**
+2. Navigate to **Environments**
+3. Click on the environment you want to change the password for.
+4. Look for the `RDS_MASTER_PASSWORD` secret and click on the "Update" button, enter a new password, then save.
+5. Go to your latest succesful build for that environment and click on the "Re-run jobs" button.
+6. Make sure the ECS task has restarded and you have a new container running.
 
 ## Running without a container
 
