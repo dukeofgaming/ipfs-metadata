@@ -52,6 +52,12 @@ variable "json_branch_promotion_map_path" {
   
 }
 
+variable "encrypted_environment_backends" {
+  description = "The flag to encrypt the environment states"
+  type        = set(string)
+  default     = []
+}
+
 #TODO: Convert to YAML path to avoid variable definition duplication
 variable "pipelines" {
   description = "The list of pipelines to deploy"

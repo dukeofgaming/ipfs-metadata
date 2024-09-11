@@ -18,6 +18,11 @@ module "environments" {
     ) ? ["pipeline"] : []
   )
 
+  encrypt_backend = contains(
+    var.encrypted_environment_backends, 
+    each.value
+  )
+
   generated_hcl_file_path = each.value == "core" ? (
     "${path.module}/backend.hcl"
   ) : "${path.module}/../app/backend-${each.key}.hcl"
