@@ -7,6 +7,10 @@ environments = [
   "production" 
 ]
 
+encrypted_environment_backends = [ 
+  "production" 
+]
+
 pipelines = {               # The list of pipelines to deploy
   "dev" = {                 # The name of the pipeline
     environment       : "dev"     # The environment to deploy to
