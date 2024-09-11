@@ -24,7 +24,9 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:ListPolicyVersions",
-      "iam:DeletePolicy"
+      "iam:DeletePolicy",
+      "iam:CreatePolicy",
+      "iam:TagPolicy"
     ]
     resources = ["*"]
     effect    = "Allow"
