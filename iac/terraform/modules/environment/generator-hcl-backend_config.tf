@@ -15,5 +15,6 @@ resource "local_file" "backend_hcl" {
     dynamodb_table  = "${local.backend_lock_table_id}"
     key             = "${var.key}"
     region          = "${data.aws_region.current.name}"
+    encrypt         = ${var.encrypt_backend ? "true" : "false"}
   EOF
 }

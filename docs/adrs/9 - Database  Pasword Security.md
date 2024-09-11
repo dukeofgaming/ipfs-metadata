@@ -4,6 +4,7 @@ In progress
 ## Context
 The database needs to be created securely and then have the service consume the password without exposing it.
 
+## Decision
 
 ```mermaid
 graph 
@@ -17,10 +18,10 @@ graph
 
     subgraph "dev"
         
-        UnencryptedState[("tfstate (unencrypted)")]
+        EncryptedState[("tfstate (Encrypted)")]
         subgraph "app"
 
-            RDS[("RDS")]    
+            RDS[("RDS ")]    
 
             RDSPasswordSecret
             RDSPasswordSecretVersion --> RDSPasswordSecret
@@ -28,20 +29,21 @@ graph
             
         end
 
-        RDSPasswordSecretVersion -- stored in --> UnencryptedState
+        RDSPasswordSecretVersion -- stored in --> EncryptedState
         RDSPasswordSecretVersion-- updates --> RDS
         RDSPasswordSecret -- consumed securely by --> ECS
 
-        RDSPasswordEnvSecret -- sent securely --> UnencryptedState
+        RDSPasswordEnvSecret -- sent securely --> EncryptedState
         RDSPasswordEnvSecret -. updates .-> RDSPasswordSecretVersion
 
-        style UnencryptedState stroke:#f00, stroke-width:2px, fill:#600
+        style EncryptedState stroke:#f00, stroke-width:2px, fill:#600
+        style Admin stroke:#f00, stroke-width:2px, fill:#600
 
     end
 
     Admin -- updates secret --> RDSPasswordEnvSecret
-    Admin -- can access --> UnencryptedState
-    CoreTerraformState -- references --> UnencryptedState
+    Admin -- can access --> EncryptedState
+    CoreTerraformState -- references --> EncryptedState
 
 
 ```
@@ -50,7 +52,6 @@ In this design the main attack vector is the password being exposed as plain tex
 
 The `production` environment will need to have an encrypted terraform state to prevent the password from being exposed.
 
-## Decision
 
 Encrypt the terraform state for the production environment, therefore, the `core` environment must support an option to encrypt a specific environment's state bucket.
 
