@@ -16,7 +16,13 @@ This module will help you create the state backend and service accounts you need
     source .env.sh
     ```
 
-2. Run `terraform init` and `terraform apply`. 
+2. Copy the `terraform.tfvars.json.dist` file to `terraform.tfvars.json` and fill in your current repository as a value.
+
+    ```json
+    {"github_repository":"dukeofgaming/ipfs-metadata"}
+    ```
+
+3. Run `terraform init` and `terraform apply`. 
     
     > **NOTE**: If this is your first run, ensure the `setup_core_environment` and `update_core_backend_hcl` variables are configured appropriately in your `terraform.tfvars` or passed as `-var` arguments to `terraform apply`. 
     >
