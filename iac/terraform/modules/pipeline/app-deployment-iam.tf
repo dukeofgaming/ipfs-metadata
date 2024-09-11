@@ -186,6 +186,22 @@ data "aws_iam_policy_document" "pipeline_permissions" {
     resources = ["*"]
     effect    = "Allow"
   }
+  # Adjusted Secrets Manager permissions to include GetResourcePolicy
+  statement {
+    actions = [
+      "secretsmanager:GetResourcePolicy",
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:CreateSecret",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:GetSecretValue",        #TODO: See if this is really needed by the pipeline
+      "secretsmanager:DeleteSecret",
+      "secretsmanager:UpdateSecret",
+      "secretsmanager:ListSecretVersionIds",
+      "secretsmanager:RestoreSecret"
+    ]
+    resources = ["*"]
+    effect    = "Allow"
+  }
 
   # RDS permissions
   statement {
@@ -203,12 +219,12 @@ data "aws_iam_policy_document" "pipeline_permissions" {
       "rds:ModifyDBParameterGroup",
       "rds:CreateDBInstance",
       "rds:CreateDBSubnetGroup",
+      "rds:ModifyDBInstance" 
     ]
     resources = ["*"]
     effect    = "Allow"
   }
 }
-
 
 
 
