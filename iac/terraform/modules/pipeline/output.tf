@@ -1,7 +1,35 @@
+output "name" {
+  description = "The name of the pipeline"
+  value       = var.name
+}
 
 output "github_repository" {
   description = "The GitHub repository for the pipelines"
   value       = data.github_repository.this.http_clone_url
+}
+
+output "branch" {
+  description = "The branch for the pipelines"
+  value       = data.github_branch.this.branch
+
+  precondition {
+    error_message = <<-EOT
+      The branch does not exist, please create branch "${var.branch}" and
+      push it to the repository ${data.github_repository.this.http_clone_url}
+
+      You can run: 
+      
+        git branch ${var.branch}
+
+      And then push it to the repository with:
+      
+        git push --set-upstream origin ${var.branch}
+
+    EOT
+
+    condition     = data.github_branch.this.branch != null
+  }
+
 }
 
 output "pipeline_aws_iam_user" {

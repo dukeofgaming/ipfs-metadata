@@ -36,6 +36,7 @@ runs:
         cp .env.dist .env
         ./build-container.sh \
           --registry-ecr ${{ inputs.ecr_url }} \
+          --version ${{ github.sha }} \
           --timestamp \
           --commit \
           --branch \

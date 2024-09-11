@@ -1,6 +1,10 @@
+#TODO: Use the same ramdon id suffix for everything that needs it
+resource "random_id" "random_alb_suffix" {
+  byte_length = 4
+}
 
 resource "aws_lb" "alb" {
-  name               = var.project
+  name               = "alb-${random_id.random_alb_suffix.hex}"
   internal           = false
   load_balancer_type = "application"
 
@@ -59,10 +63,14 @@ resource "aws_lb_listener" "frontend" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app.arn
   }
+  tags = {
+    "Service" = "ECS"
+    "Name"    = "${var.project}-${local.environment}-alb-listener"
+  }
 }
 
 resource "aws_lb_target_group" "app" {
-  name = var.project
+  name = "alb-tg-${random_id.random_alb_suffix.hex}"
 
   vpc_id      = module.vpc.vpc_id
   target_type = "ip"
@@ -78,7 +86,7 @@ resource "aws_lb_target_group" "app" {
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
-    matcher             = "200-302"
+    matcher             = "200-499" 
   }
 
   depends_on = [

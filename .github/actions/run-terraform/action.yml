@@ -1,0 +1,62 @@
+name: 'Run Terraform'
+description: 'Runs Terraform commands'
+
+inputs:
+  aws_region:
+    description: 'AWS region'
+    required: true
+  aws_access_key_id:
+    description: 'AWS Access Key ID'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS Secret Access Key'
+    required: true
+  terraform_dir:
+    description: 'Directory containing Terraform configuration files'
+    required: true
+  init_options:
+    description: 'Extra plan CLI options for Terraform'
+    required: false
+  plan_options:
+    description: 'Extra plan CLI options for Terraform'
+    required: false
+  apply_options:
+    description: 'Extra apply CLI options for Terraform'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws_access_key_id }}
+        aws-secret-access-key: ${{ inputs.aws_secret_access_key }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.9.5"
+
+    - name: Terraform Init
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
+      run: |
+        terraform init ${{ inputs.init_options }}
+        
+
+    - name: Terraform Plan
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
+      run: |
+        terraform plan ${{ inputs.plan_options }}
+
+    - name: Terraform Apply
+      working-directory: ${{ inputs.terraform_dir }}
+      shell: bash
+      run: | 
+        terraform apply ${{ inputs.apply_options }}
