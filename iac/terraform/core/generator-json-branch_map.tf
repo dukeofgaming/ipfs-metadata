@@ -18,34 +18,12 @@ locals {
 # Create branch-environment-map.json with branches/patterns as keys
 # and environments as values
 
-#TODO: Refactor to local file resources
-resource "null_resource" "branch_environment_map" {
-  
-  triggers = {
-    branches_changed      = jsonencode(keys(local.branch_environment_map))
-    environments_changed  = jsonencode(values(local.branch_environment_map))
-    # always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOF
-      echo '${jsonencode(local.branch_environment_map)}' \
-        > ${var.json_branch_environment_map_path}
-    EOF
-  }
+resource "local_file" "branch_environment_map" {
+  filename = "${var.json_branch_environment_map_path}"
+  content  = jsonencode(local.branch_environment_map)
 }
 
-resource "null_resource" "branch_promotion_map" {
-  triggers = {
-    branches_changed      = jsonencode(keys(local.branch_environment_map))
-    environments_changed  = jsonencode(values(local.branch_environment_map))
-    # always_run = timestamp()
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOF
-      echo '${jsonencode(local.branch_promotion_map)}' \
-        > ${var.json_branch_promotion_map_path}
-    EOF
-  }
+resource "local_file" "branch_promotion_map" {
+  filename = "${var.json_branch_promotion_map_path}"
+  content  = jsonencode(local.branch_promotion_map)
 }
