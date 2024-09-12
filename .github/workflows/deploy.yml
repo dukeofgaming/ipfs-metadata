@@ -39,7 +39,7 @@ jobs:
           environment_json="[\"$environment_name\"]"
 
           # Set the output
-          echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "environment=$environment_name" >> $GITHUB_OUTPUT
           echo "environment_json=$environment_json" >> $GITHUB_OUTPUT
 
           echo "Getting promotion path..."
@@ -49,7 +49,7 @@ jobs:
             ../../.github/branch-promotion-map.json \
           )
           
-          echo "environment_promoting_to=$branch_promoting_to" >> $GITHUB_OUTPUT
+          echo "branch_promoting_to=$branch_promoting_to" >> $GITHUB_OUTPUT
           #echo "**This environment can promote to**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
       
       - name: Print environment output
