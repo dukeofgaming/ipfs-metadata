@@ -38,13 +38,8 @@ jobs:
 
           environment_json="[\"$environment_name\"]"
 
-          # Set the output - Deprecated
-          # echo "::set-output name=environment::[\"$environment_name\"]"
-          # echo "::set-output name=environment::$environment_json"
-
           # Set the output
-          # echo "environment=[\"$environment_name\"]" >> $GITHUB_ENV
-          echo "environment=$environment_json" >> $GITHUB_OUTPUT
+          echo "environment=$environment" >> $GITHUB_OUTPUT
           echo "environment_json=$environment_json" >> $GITHUB_OUTPUT
 
           echo "Getting promotion path..."
@@ -53,12 +48,9 @@ jobs:
             ./get-branch-promotions.sh \
             ../../.github/branch-promotion-map.json \
           )
-
           
-          echo "This environment can promote to: $branch_promoting_to"
-
-          # echo "::set-output name=environment_promoting_to::$branch_promoting_to"
           echo "environment_promoting_to=$environment_promoting_to" >> $GITHUB_OUTPUT
+          echo "**This environment can promote to**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
       
       - name: Print environment output
         run: |
@@ -68,13 +60,12 @@ jobs:
 
   BuildAndPush:
     # Debugging
-    if: ${{  needs.PrepareEnvironment.outputs.environment != '["dev"]' }}
     name: Build and Push Docker Image
     needs: PrepareEnvironment
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
@@ -96,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
@@ -150,7 +141,7 @@ jobs:
           
 
   PromotionPR:
-    if: ${{  needs.PrepareEnvironment.outputs.environment != '["prod"]' }}
+    if: ${{  needs.PrepareEnvironment.outputs.environment_promoting_to != '' }}
     name: Create promotion PR
     needs: 
       - PrepareEnvironment
@@ -158,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
 
     steps:
