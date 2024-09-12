@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.set_env.outputs.environment }}
+      environment_json: ${{ steps.set_env.outputs.environment }}
+      environment_promoting_to: ${{ steps.set_env.outputs.environment_promoting_to }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,13 +34,35 @@ jobs:
             ../../.github/branch-environment-map.json \
           )
 
+          echo "Environment: $environment_name" >> $GITHUB_STEP_SUMMARY
+
+          environment_json="[\"$environment_name\"]"
+
+          # Set the output - Deprecated
+          # echo "::set-output name=environment::[\"$environment_name\"]"
+          echo "::set-output name=environment::$environment_json"
+
           # Set the output
-          echo "::set-output name=environment::[\"$environment_name\"]"
+          # echo "environment=[\"$environment_name\"]" >> $GITHUB_ENV
+          # echo "environment=[\"$environment_name\"]" >> $GITHUB_OUTPUT
+
+          echo "Getting promotion path..."
+          branch_promoting_to=$(
+            ./get-branch-promotions.sh \
+            ../../.github/branch-promotion-map.json \
+          )
+          echo "This environment can promote to: $branch_promoting_to"
+
+          # echo "::set-output name=environment_promoting_to::$branch_promoting_to"
+          echo "environment_promoting_to=$environment_promoting_to" >> $GITHUB_OUTPUT
       
       - name: Print environment output
-        run: echo "${{ steps.set_env.outputs.environment }}"
+        run: |
+          echo "${{ steps.set_env.outputs.environment }}"
 
   BuildAndPush:
+    # Debugging
+    if: ${{  needs.PrepareEnvironment.outputs.environment != '["dev"]' }}
     name: Build and Push Docker Image
     needs: PrepareEnvironment
     runs-on: ubuntu-latest
@@ -120,7 +144,7 @@ jobs:
           
 
   PromotionPR:
-    if: ${{ needs.PrepareEnvironment.outputs.environment != '["prod"]' }}
+    if: ${{  needs.PrepareEnvironment.outputs.environment != '["prod"]' }}
     name: Create promotion PR
     needs: 
       - PrepareEnvironment
