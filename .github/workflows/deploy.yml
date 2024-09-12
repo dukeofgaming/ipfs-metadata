@@ -34,8 +34,6 @@ jobs:
             ../../.github/branch-environment-map.json \
           )
 
-          echo "Environment: $environment_name" >> $GITHUB_STEP_SUMMARY
-
           environment_json="[\"$environment_name\"]"
 
           # Set the output
@@ -50,18 +48,18 @@ jobs:
           )
           
           echo "environment_promoting_to=$environment_promoting_to" >> $GITHUB_OUTPUT
-          echo "**This environment can promote to**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
       
       - name: Print environment output
         run: |
-          echo "Environment: ${{ steps.set_env.outputs.environment }}"
-          echo "Environment JSON: ${{ steps.set_env.outputs.environment_json }}"
-          echo "Environment promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"
+          echo "Environment: ${{ steps.set_env.outputs.environment }}"  >> $GITHUB_STEP_SUMMARY
+          echo "Environment JSON: ${{ steps.set_env.outputs.environment_json }}"  >> $GITHUB_STEP_SUMMARY
+          echo "Environment promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"  >> $GITHUB_STEP_SUMMARY
 
   BuildAndPush:
     # Debugging
     name: Build and Push Docker Image
-    needs: PrepareEnvironment
+    needs: 
+      - PrepareEnvironment
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -78,6 +76,12 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ecr_url: ${{ vars.ECR_URL }}
+
+      - name: Print environment output
+        run: |
+          echo "Environment: ${{ needs.PrepareEnvironment.outputs.environment }}"
+          echo "Environment JSON: ${{ needs.PrepareEnvironment.outputs.environment_json }}"
+          echo "Environment promoting to: ${{ needs.PrepareEnvironment.outputs.environment_promoting_to }}"
   
   RunTerraform:
     name: Run Terraform
