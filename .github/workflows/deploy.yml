@@ -16,7 +16,7 @@ jobs:
     outputs:
       environment: ${{ steps.set_env.outputs.environment }}
       environment_json: ${{ steps.set_env.outputs.environment_json }}
-      environment_promoting_to: ${{ steps.set_env.outputs.environment_promoting_to }}
+      branch_promoting_to: ${{ steps.set_env.outputs.branch_promoting_to }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +34,8 @@ jobs:
             ../../.github/branch-environment-map.json \
           )
 
+          #echo "Environment: $environment_name" >> $GITHUB_STEP_SUMMARY
+
           environment_json="[\"$environment_name\"]"
 
           # Set the output
@@ -47,13 +49,14 @@ jobs:
             ../../.github/branch-promotion-map.json \
           )
           
-          echo "environment_promoting_to=$environment_promoting_to" >> $GITHUB_OUTPUT
+          echo "environment_promoting_to=$branch_promoting_to" >> $GITHUB_OUTPUT
+          #echo "**This environment can promote to**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
       
       - name: Print environment output
         run: |
           echo "Environment: ${{ steps.set_env.outputs.environment }}"  >> $GITHUB_STEP_SUMMARY
           echo "Environment JSON: ${{ steps.set_env.outputs.environment_json }}"  >> $GITHUB_STEP_SUMMARY
-          echo "Environment promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"  >> $GITHUB_STEP_SUMMARY
+          echo "Branch promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"  >> $GITHUB_STEP_SUMMARY
 
   BuildAndPush:
     # Debugging
@@ -81,7 +84,7 @@ jobs:
         run: |
           echo "Environment: ${{ needs.PrepareEnvironment.outputs.environment }}"
           echo "Environment JSON: ${{ needs.PrepareEnvironment.outputs.environment_json }}"
-          echo "Environment promoting to: ${{ needs.PrepareEnvironment.outputs.environment_promoting_to }}"
+          echo "Branch promoting to: ${{ needs.PrepareEnvironment.outputs.branch_promoting_to }}"
   
   RunTerraform:
     name: Run Terraform
@@ -145,7 +148,7 @@ jobs:
           
 
   PromotionPR:
-    if: ${{  needs.PrepareEnvironment.outputs.environment_promoting_to != '' }}
+    if: ${{  needs.PrepareEnvironment.outputs.branch_promoting_to != '' }}
     name: Create promotion PR
     needs: 
       - PrepareEnvironment
