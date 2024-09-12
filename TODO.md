@@ -6,20 +6,20 @@ NFT IPFS metadata fetcher.
 
 ### Todo
 
-- [ ] Harden security  
 - [ ] Look into mkdocs  
-- [ ] Add better healthcheck for app LB  
 - [ ] Add ECS task healtcheck  
 
 ### In Progress
 
-- [ ] Setup secret for database password  
+- [ ] Harden security  
 
 ### Testing
 
 
 ### Done ✓
 
+- [x] Add better healthcheck for app LB  
+- [x] Setup secret for database password  
 - [x] Environment release promotion PRs ADR  
 - [x] Add environment promotion through PRs  
 - [x] Split-off machine and local Terraform configuration  

@@ -1,5 +1,5 @@
 ## Status
-Accepted
+Proposed
 
 ## Context
 Following GitOps best practices, and considering that we already have a `dev` branch, we need to decide how to handle the deployment and promotion path of new features and bug fixes without handling the image configuration manually.

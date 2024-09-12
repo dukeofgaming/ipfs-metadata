@@ -9,6 +9,12 @@ variable "project" {
   type        = string
 }
 
+variable "app_version" {
+  description = "The version of the application"
+  type        = string
+  default     = "TERRAFORM_INITIALIZED"
+}
+
 variable "environment" {
   description = "The environment to deploy the application"
   type        = string
@@ -72,4 +78,16 @@ variable "database_port" {
   description = "The port the database listens on"
   type        = number
   default     = 5432
+}
+
+variable "healthcheck_endpoint" {
+  description = "The endpoint to use for the healthcheck"
+  type        = string
+  default     = "/healthcheck"
+}
+
+variable "healtcheck_matcher" {
+  description = "The matcher to use for the healthcheck"
+  type        = string
+  default     = "200"
 }

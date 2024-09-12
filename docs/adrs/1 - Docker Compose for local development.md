@@ -1,5 +1,5 @@
 ## Status
-Proposed
+Accepted
 
 ## Context
 Local development should be fast and cheap to execute while allowing to test the complete system.

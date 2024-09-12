@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.set_env.outputs.environment }}
+      environment_json: ${{ steps.set_env.outputs.environment_json }}
+      branch_promoting_to: ${{ steps.set_env.outputs.branch_promoting_to }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,19 +34,42 @@ jobs:
             ../../.github/branch-environment-map.json \
           )
 
+          # Check if environment name exists for this branch, otherwise fail the pipeline
+          if [ -z "$environment_name" ]; then
+            echo "Environment not found for this branch" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          environment_json="[\"$environment_name\"]"
+
           # Set the output
-          echo "::set-output name=environment::[\"$environment_name\"]"
+          echo "environment=$environment_name" >> $GITHUB_OUTPUT
+          echo "environment_json=$environment_json" >> $GITHUB_OUTPUT
+
+          echo "Getting promotion path..."
+          chmod +x get-branch-promotions.sh
+          branch_promoting_to=$(
+            ./get-branch-promotions.sh \
+            ../../.github/branch-promotion-map.json \
+          )
+          
+          echo "branch_promoting_to=$branch_promoting_to" >> $GITHUB_OUTPUT
       
       - name: Print environment output
-        run: echo "${{ steps.set_env.outputs.environment }}"
+        run: |
+          echo "Environment: ${{ steps.set_env.outputs.environment }}"  >> $GITHUB_STEP_SUMMARY
+          echo "Environment JSON: ${{ steps.set_env.outputs.environment_json }}"  >> $GITHUB_STEP_SUMMARY
+          echo "Branch promoting to: ${{ steps.set_env.outputs.branch_promoting_to }}"  >> $GITHUB_STEP_SUMMARY
 
   BuildAndPush:
+    # Debugging
     name: Build and Push Docker Image
-    needs: PrepareEnvironment
+    needs: 
+      - PrepareEnvironment
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
@@ -57,6 +82,12 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ecr_url: ${{ vars.ECR_URL }}
+
+      - name: Print environment output
+        run: |
+          echo "Environment: ${{ needs.PrepareEnvironment.outputs.environment }}"
+          echo "Environment JSON: ${{ needs.PrepareEnvironment.outputs.environment_json }}"
+          echo "Branch promoting to: ${{ needs.PrepareEnvironment.outputs.branch_promoting_to }}"
   
   RunTerraform:
     name: Run Terraform
@@ -66,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
     steps:
       - name: Checkout
@@ -89,11 +120,13 @@ jobs:
           # TODO: Add reusable input for plan_and_apply_options
           plan_options: |
             -var="environment=${{ matrix.environment }}" \
+            -var="app_version=${{ github.sha }}" \
             -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}" \
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" 
-
+            
           apply_options: |
             -var="environment=${{ matrix.environment }}" \
+            -var="app_version=${{ github.sha }}" \
             -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}" \
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" \
             -auto-approve
@@ -118,7 +151,7 @@ jobs:
           
 
   PromotionPR:
-    if: ${{ needs.PrepareEnvironment.outputs.environment != '["prod"]' }}
+    if: ${{  needs.PrepareEnvironment.outputs.branch_promoting_to != '' }}
     name: Create promotion PR
     needs: 
       - PrepareEnvironment
@@ -126,7 +159,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment)}}
+        environment: ${{fromJson(needs.PrepareEnvironment.outputs.environment_json)}}
     environment: ${{ matrix.environment }}
 
     steps:

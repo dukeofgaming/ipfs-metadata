@@ -79,14 +79,14 @@ resource "aws_lb_target_group" "app" {
   port     = var.container_port
 
   health_check {
-    path                = "/"
+    path                = var.healthcheck_endpoint
     protocol            = "HTTP"
     port                = "traffic-port"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 2
-    matcher             = "200-499" 
+    matcher             = var.healtcheck_matcher 
   }
 
   depends_on = [

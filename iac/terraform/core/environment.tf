@@ -23,9 +23,11 @@ module "environments" {
     each.value
   )
 
-  generated_hcl_file_path = each.value == "core" ? (
-    "${path.module}/backend.hcl"
-  ) : "${path.module}/../app/backend-${each.key}.hcl"
+  generated_hcl_file_path = (each.value == "core") ? (
+    var.update_core_backend_hcl?("${path.module}/backend.hcl"):false
+  ) : (
+    var.update_app_backend_hcl?("${path.module}/../app/backend-${each.key}.hcl"):false
+  )
 
   tags = merge(
     var.tags,

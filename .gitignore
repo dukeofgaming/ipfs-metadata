@@ -10,3 +10,5 @@ iac/terraform/core/backend.tf
 
 iac/terraform/app/terraform-local.tfvars
 iac/terraform/app/terraform*.tfvars.json
+
+iac/terraform/core/terraform.tfvars.json
