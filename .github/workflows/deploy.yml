@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.set_env.outputs.environment }}
-      environment_json: ${{ steps.set_env.outputs.environment }}
+      environment_json: ${{ steps.set_env.outputs.environment_json }}
       environment_promoting_to: ${{ steps.set_env.outputs.environment_promoting_to }}
     steps:
       - name: Checkout
@@ -55,7 +55,7 @@ jobs:
       - name: Print environment output
         run: |
           echo "Environment: ${{ steps.set_env.outputs.environment }}"
-          echo "Environment JSON: ${{ steps.set_env.outputs.environment_JSON }}"
+          echo "Environment JSON: ${{ steps.set_env.outputs.environment_json }}"
           echo "Environment promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"
 
   BuildAndPush:
