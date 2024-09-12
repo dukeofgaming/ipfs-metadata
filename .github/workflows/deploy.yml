@@ -50,7 +50,7 @@ jobs:
           )
           
           echo "branch_promoting_to=$branch_promoting_to" >> $GITHUB_OUTPUT
-          #echo "**This environment can promote to**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
+          echo "**This environment can promote to branch**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
       
       - name: Print environment output
         run: |
