@@ -40,11 +40,11 @@ jobs:
 
           # Set the output - Deprecated
           # echo "::set-output name=environment::[\"$environment_name\"]"
-          echo "::set-output name=environment::$environment_json"
+          # echo "::set-output name=environment::$environment_json"
 
           # Set the output
           # echo "environment=[\"$environment_name\"]" >> $GITHUB_ENV
-          # echo "environment=[\"$environment_name\"]" >> $GITHUB_OUTPUT
+          echo "environment=environment_json" >> $GITHUB_OUTPUT
 
           echo "Getting promotion path..."
           branch_promoting_to=$(
