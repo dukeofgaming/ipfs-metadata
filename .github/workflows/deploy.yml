@@ -44,13 +44,17 @@ jobs:
 
           # Set the output
           # echo "environment=[\"$environment_name\"]" >> $GITHUB_ENV
-          echo "environment=environment_json" >> $GITHUB_OUTPUT
+          echo "environment=$environment_json" >> $GITHUB_OUTPUT
+          echo "environment_json=$environment_json" >> $GITHUB_OUTPUT
 
           echo "Getting promotion path..."
+          chmod +x get-branch-promotions.sh
           branch_promoting_to=$(
             ./get-branch-promotions.sh \
             ../../.github/branch-promotion-map.json \
           )
+
+          
           echo "This environment can promote to: $branch_promoting_to"
 
           # echo "::set-output name=environment_promoting_to::$branch_promoting_to"
@@ -58,7 +62,9 @@ jobs:
       
       - name: Print environment output
         run: |
-          echo "${{ steps.set_env.outputs.environment }}"
+          echo "Environment: ${{ steps.set_env.outputs.environment }}"
+          echo "Environment JSON: ${{ steps.set_env.outputs.environment_JSON }}"
+          echo "Environment promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"
 
   BuildAndPush:
     # Debugging
