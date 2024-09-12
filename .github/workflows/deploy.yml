@@ -34,7 +34,11 @@ jobs:
             ../../.github/branch-environment-map.json \
           )
 
-          #echo "Environment: $environment_name" >> $GITHUB_STEP_SUMMARY
+          # Check if environment name exists for this branch, otherwise fail the pipeline
+          if [ -z "$environment_name" ]; then
+            echo "Environment not found for this branch" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
           environment_json="[\"$environment_name\"]"
 
@@ -50,13 +54,12 @@ jobs:
           )
           
           echo "branch_promoting_to=$branch_promoting_to" >> $GITHUB_OUTPUT
-          echo "**This environment can promote to branch**: $branch_promoting_to" >> $GITHUB_STEP_SUMMARY
       
       - name: Print environment output
         run: |
           echo "Environment: ${{ steps.set_env.outputs.environment }}"  >> $GITHUB_STEP_SUMMARY
           echo "Environment JSON: ${{ steps.set_env.outputs.environment_json }}"  >> $GITHUB_STEP_SUMMARY
-          echo "Branch promoting to: ${{ steps.set_env.outputs.environment_promoting_to }}"  >> $GITHUB_STEP_SUMMARY
+          echo "Branch promoting to: ${{ steps.set_env.outputs.branch_promoting_to }}"  >> $GITHUB_STEP_SUMMARY
 
   BuildAndPush:
     # Debugging
