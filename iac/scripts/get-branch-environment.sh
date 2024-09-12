@@ -19,7 +19,7 @@ branch="${2:-$(git rev-parse --abbrev-ref HEAD)}"  # If branch is not provided, 
 
 # Check if the JSON file exists
 if [ ! -f "$json_file" ]; then
-  echo "Error: JSON file '$json_file' does not exist."
+  echo "Error: JSON file '$json_file' does not exist." >& 2
   exit 1
 fi
 
@@ -34,7 +34,7 @@ find_environment_and_workspace() {
 
   # Check if a match was found
   if [ "$env_template" = "null" ] || [ -z "$env_template" ]; then
-    echo "No match found for branch: $branch"
+    echo "No match found for branch: $branch"  >& 2
     return 1
   fi
 
