@@ -15,13 +15,15 @@ usage() {
 
 # Function to handle error when no promotion branch is found
 error_exit() {
-    echo "No promotion branch for '$1'"
+    echo "No promotion branch for '$1'" >& 2
+    echo ""
     exit 1
 }
 
 # Function to handle error when no branch is found for reverse lookup
 error_from_exit() {
-    echo "No branch promotes to '$1'"
+    echo "Branch '$1' is not promoted from any other" >& 2
+    echo ""
     exit 1
 }
 
