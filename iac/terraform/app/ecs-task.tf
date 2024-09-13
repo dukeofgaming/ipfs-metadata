@@ -75,7 +75,7 @@ resource "aws_ecs_task_definition" "this" {
 
         # Health Check
         healthCheck : {
-          command  : ["CMD-SHELL", "/app --healthcheck"],
+          command  : ["CMD", "/app --healthcheck"],
           interval : 30,
           timeout  : 5,
           retries  : 3,
