@@ -2,13 +2,28 @@ package main
 
 import (
 	"log"
+	"flag"
+	"os"
 )
 
 func main() {
+	healthcheck := flag.Bool("healthcheck", false, "Perform a health check")
+    flag.Parse()
+
 	db, err := setupDB()
 	if err != nil {
+		
+		if *healthcheck {
+            log.Printf("Health check failed: %v", err)
+        }
+
 		log.Fatal(err)
 	}
+
+	if *healthcheck {
+        log.Println("Health check passed!")
+        os.Exit(0)
+    }
 
 	cids, err := readCSV("data/ipfs_cids.csv")
 	if err != nil {
