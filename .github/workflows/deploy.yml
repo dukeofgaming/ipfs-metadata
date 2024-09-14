@@ -148,13 +148,6 @@ jobs:
           name: environment-tfvars-json
           path: "./iac/terraform/app"
 
-      - name: Extract environment tfvars
-        working-directory: ./iac/terraform/app
-        run: |
-          ls -alR
-
-          unzip -o ./iac/terraform/app/environment-tfvars-json.zip
-
       - name: Commit environment tfvars tag the deployment
         working-directory: ./iac/scripts
         run: |
