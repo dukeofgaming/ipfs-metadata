@@ -32,7 +32,6 @@ variable "container_port" {
   type        = number
 }
 
-#TODO: Implement "valueFrom" for AWS Secrets Manager
 variable "container_environment" {
   description = "The environment variables to pass to the container"
   type        = map(any)
@@ -46,6 +45,18 @@ variable "ecs_circuit_breaker" {
     rollback : optional(bool, true)
   })
   default = {}
+}
+
+variable "healthcheck_endpoint" {
+  description = "The endpoint to use for the healthcheck"
+  type        = string
+  default     = "/healthcheck"
+}
+
+variable "healtcheck_matcher" {
+  description = "The matcher to use for the healthcheck"
+  type        = string
+  default     = "200"
 }
 
 # RDS
@@ -80,14 +91,9 @@ variable "database_port" {
   default     = 5432
 }
 
-variable "healthcheck_endpoint" {
-  description = "The endpoint to use for the healthcheck"
-  type        = string
-  default     = "/healthcheck"
-}
+variable "rds_master_password_secret_recovery_window_in_days" {
+  description = "The number of days to retain the secret"
+  type        = number
+  default     = 0
 
-variable "healtcheck_matcher" {
-  description = "The matcher to use for the healthcheck"
-  type        = string
-  default     = "200"
 }
