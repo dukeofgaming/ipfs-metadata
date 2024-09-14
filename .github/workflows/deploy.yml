@@ -141,14 +141,7 @@ jobs:
           artifact_name: environment-tfvars-json
           artifact_relative_path: "terraform-${{ matrix.environment }}.tfvars.json"
           
-
-      - name: Download environment tfvars
-        uses: actions/download-artifact@v4
-        with:
-          name: environment-tfvars-json
-          path: "./iac/terraform/app"
-
-      - name: Commit environment tfvars tag the deployment
+      - name: Tag the deployment
         working-directory: ./iac/scripts
         run: |
           # Tag deployed commit
@@ -156,22 +149,6 @@ jobs:
           ./deployment-tagger.sh tag \
             --current \
             --date
-            
-          if [ "${{env.COMMIT_DEPLOYMENT}}" == "true" ]; then
-            echo "Commiting & pushing environment tfvars" >> $GITHUB_STEP_SUMMARY
-
-            git config --global user.email "github@github.com"
-            git config --global user.name "GitHub Actions"
-            
-            # Forcefully add the file to git's staging area 
-            # for the merge commit from the PR but 
-            # keep ignoring changes to the file
-            environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
-
-            git add --force "../terraform/app/$environment_tfvars_json"
-            git commit -m "Committing tfvars.json for ${{ matrix.environment }} [skip ci]"
-            git push
-          fi
             
       - name: Deployment summary
         shell: bash
@@ -204,14 +181,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Download environment tfvars
+        uses: actions/download-artifact@v4
+        with:
+          name: environment-tfvars-json
+          path: "./iac/terraform/app"
+
       - name: Create promotion PR
         working-directory: ./iac/scripts
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Configuring git author
+          git config --global user.email "github@github.com"
+          git config --global user.name "GitHub Actions"
 
-          echo "Installing jq..."
-          sudo apt-get install -y jq
+          if [ "${{env.COMMIT_DEPLOYMENT}}" == "true" ]; then
+            echo "Commiting environment tfvars" >> $GITHUB_STEP_SUMMARY
+            
+            # Forcefully add the file to git's staging area 
+            # for the merge commit from the PR but 
+            # keep ignoring changes to the file
+            environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
+
+            git add --force "../terraform/app/$environment_tfvars_json"
+            git commit -m "Committing tfvars.json for ${{ matrix.environment }}"
+          fi
 
 
           chmod +x get-branch-promotions.sh
