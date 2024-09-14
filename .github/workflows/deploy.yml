@@ -8,7 +8,7 @@ on:
       - prod
 
 env:
-  COMMIT_ENV_TFVARS: "true"
+  COMMIT_DEPLOYMENT: "true"
 
 jobs:
   PrepareEnvironment:
@@ -142,9 +142,8 @@ jobs:
             --current \
             --date
             
-          # Check if env.COMMIT_ENV_TFVARS is set to true  
-          if [ "${{env.COMMIT_ENV_TFVARS}}" == "true" ]; then
-            echo "Commiting environment tfvars"
+          if [ "${{env.COMMIT_DEPLOYMENT}}" == "true" ]; then
+            echo "Commiting & pushing environment tfvars" >> $GITHUB_STEP_SUMMARY
             
             # Forcefully add the file to git's staging area 
             # for the merge commit from the PR but 
@@ -152,13 +151,7 @@ jobs:
             environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
             git add --force "../terraform/app/$environment_tfvars_json"
             git commit -m "Committing tfvars.json for ${{ matrix.environment }} [skip ci]"
-
-            # Don't push or merge until the PR is approved
-            # unless it's the end of the pipeline
-            # Only if i t's the end of the pipeline then push the changes
-            if [ -z "${{ needs.PrepareEnvironment.outputs.branch_promoting_to }}" ]; then
-              git push
-            fi
+            git push
           fi
             
       - name: Deployment summary
@@ -169,7 +162,10 @@ jobs:
             
             echo "LB URL: $lb_url"
             echo "🌐 [Application URL]($lb_url/metadata)" >> $GITHUB_STEP_SUMMARY
-            echo "🏁🔚 This is the final stage of the pipeline 🎉" >> $GITHUB_STEP_SUMMARY
+
+            if [ -z "${{ needs.PrepareEnvironment.outputs.branch_promoting_to }}" ]; then
+              echo "🏁🔚 This is the final stage of the pipeline 🎉" >> $GITHUB_STEP_SUMMARY
+            fi
       
 
 
