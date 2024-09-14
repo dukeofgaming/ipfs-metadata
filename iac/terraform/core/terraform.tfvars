@@ -19,7 +19,7 @@ pipelines = {               # The list of pipelines to deploy
     branch_promoting_to : "main"
 
     branch_protections = {  
-      force_push          : false,
+      force_push          : true,
       require_pr          : true,
       required_approvals  : 0
       enforce_on_admins   : false,
@@ -40,8 +40,8 @@ pipelines = {               # The list of pipelines to deploy
     branch_protections = {
       force_push          : false,
       require_pr          : true,
-      enforce_on_admins   : false,
       required_approvals  : 0
+      enforce_on_admins   : false,
     }
   },
 
@@ -51,10 +51,10 @@ pipelines = {               # The list of pipelines to deploy
     branch        : "prod"
 
     branch_protections = {
-      require_pr          : true,
       force_push          : false,
-      enforce_on_admins   : true,
+      require_pr          : true,
       required_approvals  : 1
+      enforce_on_admins   : true,
     }
   }
 }

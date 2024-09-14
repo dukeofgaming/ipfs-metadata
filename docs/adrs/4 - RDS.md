@@ -1,5 +1,5 @@
 ## Status
-In Progress
+Accepted
 
 ## Context
 The project requires a Postgres database for the container. The options are RDS or a Postgres container.

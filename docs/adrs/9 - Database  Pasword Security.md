@@ -1,5 +1,5 @@
 ## Status
-In progress
+Accepted
 
 ## Context
 The database needs to be created securely and then have the service consume the password without exposing it.

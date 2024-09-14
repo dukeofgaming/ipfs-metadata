@@ -13,4 +13,4 @@ Taking into consideration that the base image for the build is `golang:1.21.11-b
 1. Lighter image size.
 2. Faster cold start times.
 3. Reduced attack surface.
-4. One trade-off is that we won't be able to implement health checks at the ECS task level, as the distroless image doesn't have a shell or package manager.
+4. Since since the distroless image doesn't have a shell or package manager, a `--healthcheck` option needed to be implemented as part of the program binary for the ECS Task level health check to work.
