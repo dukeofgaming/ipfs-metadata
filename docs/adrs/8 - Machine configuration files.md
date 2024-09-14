@@ -70,4 +70,5 @@ graph LR
     3. Making it easy for developers to update their local configuration.
 
 5. The script `switch-environment` was created for safe environment switching, which knows to modify the `terraform.tfvars.json` file with the correct environment value.
+6. In order to commit the `terraform-<environment>.tfvars.json` file from the pipeline, a dedicated Github user account needs to be created, so by default, the pipeline will only upload it as an artifact.
 
