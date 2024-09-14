@@ -116,6 +116,8 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           terraform_dir: ./iac/terraform/app
+          artifact_name: environment-tfvars-json
+          artifact_path: "terraform-${{ matrix.environment }}.tfvars.json"
           init_options: |
             -backend-config="backend-${{ matrix.environment }}.hcl"
 
@@ -133,8 +135,6 @@ jobs:
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" \
             -auto-approve
           
-          artifact_name: environment-tfvars-json
-          artifact_path: "terraform-${{ matrix.environment }}.tfvars.json"
 
       - name: Download environment tfvars
         uses: actions/download-artifact@v3
@@ -161,7 +161,7 @@ jobs:
             # for the merge commit from the PR but 
             # keep ignoring changes to the file
             environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
-            
+
             git add --force "../terraform/app/$environment_tfvars_json"
             git commit -m "Committing tfvars.json for ${{ matrix.environment }} [skip ci]"
             git push
