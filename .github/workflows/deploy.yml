@@ -132,6 +132,15 @@ jobs:
             -var="container_image=${{ vars.ECR_URL }}:${{ github.sha }}" \
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" \
             -auto-approve
+          
+          artifact_name: environment-tfvars-json
+          artifact_path: "terraform-${{ matrix.environment }}.tfvars.json"
+
+      - name: Download environment tfvars
+        uses: actions/download-artifact@v3
+        with:
+          name: environment-tfvars-json
+          path: "./iac/terraform/app/terraform-${{ matrix.environment }}.tfvars.json"
 
       - name: Commit environment tfvars tag the deployment
         working-directory: ./iac/scripts
@@ -144,11 +153,15 @@ jobs:
             
           if [ "${{env.COMMIT_DEPLOYMENT}}" == "true" ]; then
             echo "Commiting & pushing environment tfvars" >> $GITHUB_STEP_SUMMARY
+
+            git config --global user.email "github@github.com"
+            git config --global user.name "GitHub Actions"
             
             # Forcefully add the file to git's staging area 
             # for the merge commit from the PR but 
             # keep ignoring changes to the file
             environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
+            
             git add --force "../terraform/app/$environment_tfvars_json"
             git commit -m "Committing tfvars.json for ${{ matrix.environment }} [skip ci]"
             git push

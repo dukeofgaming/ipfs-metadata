@@ -14,6 +14,7 @@ inputs:
   terraform_dir:
     description: 'Directory containing Terraform configuration files'
     required: true
+
   init_options:
     description: 'Extra plan CLI options for Terraform'
     required: false
@@ -22,6 +23,13 @@ inputs:
     required: false
   apply_options:
     description: 'Extra apply CLI options for Terraform'
+    required: false
+
+  artifact_name:
+    description: 'Name of the artifact to upload'
+    required: false
+  artifact_path:
+    description: 'Path to the artifact to upload'
     required: false
 
 outputs:
@@ -72,3 +80,11 @@ runs:
       shell: bash
       run: |
         echo "terraform_output=$(terraform output -json | jq -c)" >> $GITHUB_OUTPUT
+
+    - name: Set Terraform Output
+      if: ${{ input.artifact_name !+ '' && input.artifact_path != '' }}
+      working-directory: ${{ inputs.terraform_dir }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ inputs.artifact_path }}
