@@ -66,13 +66,15 @@ runs:
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
       run: |
-        terraform plan ${{ inputs.plan_options }}
+        terraform plan \
+          ${{ inputs.plan_options }}
 
     - name: Terraform Apply
       working-directory: ${{ inputs.terraform_dir }}
       shell: bash
       run: | 
-        terraform apply ${{ inputs.apply_options }}
+        terraform apply \
+          ${{ inputs.apply_options }}
 
     - name: Terraform Output
       id: tf_output
@@ -81,7 +83,7 @@ runs:
       run: |
         echo "terraform_output=$(terraform output -json | jq -c)" >> $GITHUB_OUTPUT
 
-    - name: Set Terraform Output
+    - name: Upload artifacts
       if: ${{ inputs.artifact_name != '' && inputs.artifact_relative_path != '' }}
       uses: actions/upload-artifact@v4
       with:
