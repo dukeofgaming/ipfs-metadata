@@ -7,10 +7,12 @@ on:
       - main
       - prod
 
+env:
+  COMMIT_ENV_TFVARS: "true"
+
 jobs:
-  #TODO: Get rid of set-output 
-  #       https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
   PrepareEnvironment:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Prepare Environment
     runs-on: ubuntu-latest
     outputs:
@@ -103,7 +105,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      #TODO: Add dynamic action outputs for being able 
+      #TODO: Add dynamic action outputs to be able 
       #       to get values from terraform output so that we can present
       #       them in the summary
       - name: Run Terraform Action
@@ -131,24 +133,45 @@ jobs:
             -var="database_password=${{ secrets.RDS_MASTER_PASSWORD }}" \
             -auto-approve
 
-      - name: Tag the deployment
+      - name: Commit environment tfvars tag the deployment
         working-directory: ./iac/scripts
         run: |
+          # Tag deployed commit
           chmod +x ./deployment-tagger.sh
-          
           ./deployment-tagger.sh tag \
-              --current \
-              --date
+            --current \
+            --date
+            
+          # Check if env.COMMIT_ENV_TFVARS is set to true  
+          if [ "${{env.COMMIT_ENV_TFVARS}}" == "true" ]; then
+            echo "Commiting environment tfvars"
+            
+            # Forcefully add the file to git's staging area 
+            # for the merge commit from the PR but 
+            # keep ignoring changes to the file
+            environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
+            git add --force "../terraform/app/$environment_tfvars_json"
+            git commit -m "Committing tfvars.json for ${{ matrix.environment }} [skip ci]"
 
-      - name: Add to build summary
+            # Don't push or merge until the PR is approved
+            # unless it's the end of the pipeline
+            # Only if i t's the end of the pipeline then push the changes
+            if [ -z "${{ needs.PrepareEnvironment.outputs.branch_promoting_to }}" ]; then
+              git push
+            fi
+          fi
+            
+      - name: Deployment summary
         shell: bash
         run: |
-          terraform_output='${{ steps.terraform_action.outputs.terraform_output }}'
-          lb_url=$(echo "$terraform_output" | jq -r '.lb_url.value')
-          
-          echo "LB URL: $lb_url"
-          echo "🌐 [Application URL]($lb_url/metadata)" >> $GITHUB_STEP_SUMMARY
-          
+            terraform_output='${{ steps.terraform_action.outputs.terraform_output }}'
+            lb_url=$(echo "$terraform_output" | jq -r '.lb_url.value')
+            
+            echo "LB URL: $lb_url"
+            echo "🌐 [Application URL]($lb_url/metadata)" >> $GITHUB_STEP_SUMMARY
+            echo "🏁🔚 This is the final stage of the pipeline 🎉" >> $GITHUB_STEP_SUMMARY
+      
+
 
   PromotionPR:
     if: ${{  needs.PrepareEnvironment.outputs.branch_promoting_to != '' }}
