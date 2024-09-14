@@ -28,7 +28,7 @@ inputs:
   artifact_name:
     description: 'Name of the artifact to upload'
     required: false
-  artifact_path:
+  artifact_relative_path:
     description: 'Path to the artifact to upload'
     required: false
 
@@ -82,8 +82,8 @@ runs:
         echo "terraform_output=$(terraform output -json | jq -c)" >> $GITHUB_OUTPUT
 
     - name: Set Terraform Output
-      if: ${{ inputs.artifact_name != '' && inputs.artifact_path != '' }}
+      if: ${{ inputs.artifact_name != '' && inputs.artifact_relative_path != '' }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.artifact_name }}
-        path: ${{ inputs.artifact_path }}
+        path: ${{ format('{0}/{1}', inputs.terraform_dir, inputs.artifact_relative_path) }}
