@@ -82,7 +82,7 @@ runs:
         echo "terraform_output=$(terraform output -json | jq -c)" >> $GITHUB_OUTPUT
 
     - name: Set Terraform Output
-      if: ${{ input.artifact_name !+ '' && input.artifact_path != '' }}
+      if: ${{ inputs.artifact_name !+ '' && inputs.artifact_path != '' }}
       working-directory: ${{ inputs.terraform_dir }}
       uses: actions/upload-artifact@v3
       with:
