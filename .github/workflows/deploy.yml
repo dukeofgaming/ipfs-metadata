@@ -8,7 +8,7 @@ on:
       - prod
 
 env:
-  COMMIT_DEPLOYMENT: "true"
+  COMMIT_DEPLOYMENT: "false"
 
 jobs:
   PrepareEnvironment:
@@ -205,7 +205,8 @@ jobs:
             environment_tfvars_json="terraform-${{ matrix.environment }}.tfvars.json"
 
             git add --force "../terraform/app/$environment_tfvars_json"
-            git commit -m "Committing tfvars.json for ${{ matrix.environment }}"
+            git commit -m "[skip ci] Committing $environment_tfvars_json@${{ github.sha }}"
+            git push
           fi
 
 
