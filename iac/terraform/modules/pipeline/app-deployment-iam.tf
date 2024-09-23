@@ -6,11 +6,9 @@ resource "aws_iam_policy" "pipeline_permissions" {
 }
 
 locals {
-  # pipeline_iam_policy = yamldecode(file("${path.module}/policies/iam.yml"))
-
-  yaml_policies_path = "${path.module}/policies"
-  yaml_fileset      = fileset(local.yaml_policies_path, "*.yml")
-  policy_yaml_files = { 
+  yaml_policies_path  = "${path.module}/policies"
+  yaml_fileset        = fileset(local.yaml_policies_path, "*.yml")
+  policy_yaml_files   = { 
     for file_name in local.yaml_fileset : 
       split(
         ".",
@@ -28,9 +26,9 @@ data "aws_iam_policy_document" "pipeline_permissions" {
   dynamic statement {
     for_each = local.policy_yaml_files
     content{
-      effect    = local.policy_yaml_files[statement.key].policy.statements[0].effect
-      actions   = local.policy_yaml_files[statement.key].policy.statements[0].actions
-      resources = local.policy_yaml_files[statement.key].policy.statements[0].resources
+      effect    = local.policy_yaml_files[statement.key].policy.statement.effect
+      actions   = local.policy_yaml_files[statement.key].policy.statement.actions
+      resources = local.policy_yaml_files[statement.key].policy.statement.resources
     }
   }
 }

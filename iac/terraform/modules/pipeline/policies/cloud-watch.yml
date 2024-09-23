@@ -1,13 +1,13 @@
 # CloudWatch Permissions
 policy:
-  statements:
-    - effect: Allow
-      actions:
-        - logs:DescribeLogGroups
-        - logs:ListTagsForResource
-        - logs:DeleteLogGroup
-        - logs:CreateLogGroup
-        - logs:TagResource
-        - logs:PutRetentionPolicy
-      resources:
-        - "*"
+  statement:
+    effect: Allow
+    actions:
+      - logs:DescribeLogGroups
+      - logs:ListTagsForResource
+      - logs:DeleteLogGroup
+      - logs:CreateLogGroup
+      - logs:TagResource
+      - logs:PutRetentionPolicy
+    resources:
+      - "*"
