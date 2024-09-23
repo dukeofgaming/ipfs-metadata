@@ -5,31 +5,37 @@ resource "aws_iam_policy" "pipeline_permissions" {
   policy = data.aws_iam_policy_document.pipeline_permissions.json
 }
 
+locals {
+  # pipeline_iam_policy = yamldecode(file("${path.module}/policies/iam.yml"))
+
+  yaml_policies_path = "${path.module}/policies"
+  yaml_fileset      = fileset(local.yaml_policies_path, "*.yml")
+  policy_yaml_files = { 
+    for file_name in local.yaml_fileset : 
+      split(
+        ".",
+        file_name
+      )[0] => yamldecode(
+        file("${local.yaml_policies_path}/${file_name}")
+      ) 
+  }
+}
+
 
 data "aws_iam_policy_document" "pipeline_permissions" {
   version = "2012-10-17"
 
+
+  # statement {
+    # effect    = local.pipeline_iam_policy.policy.statements[0].effect
+    # actions   = local.pipeline_iam_policy.policy.statements[0].actions
+    # resources = local.pipeline_iam_policy.policy.statements[0].resources
+  # }
+
   statement {
-    actions = [
-      "iam:GetRole",
-      "iam:ListRolePolicies",
-      "iam:ListAttachedRolePolicies",
-      "iam:PassRole",
-      "iam:DetachRolePolicy",
-      "iam:ListInstanceProfilesForRole",
-      "iam:DeleteRole",
-      "iam:CreateRole",
-      "iam:TagRole",
-      "iam:AttachRolePolicy",
-      "iam:GetPolicy",
-      "iam:GetPolicyVersion",
-      "iam:ListPolicyVersions",
-      "iam:DeletePolicy",
-      "iam:CreatePolicy",
-      "iam:TagPolicy"
-    ]
-    resources = ["*"]
-    effect    = "Allow"
+    effect    = local.policy_yaml_files["iam"].policy.statements[0].effect
+    actions   = local.policy_yaml_files["iam"].policy.statements[0].actions
+    resources = local.policy_yaml_files["iam"].policy.statements[0].resources
   }
 
   # EC2 permissions
@@ -239,3 +245,4 @@ resource "aws_iam_user_policy_attachment" "pipeline_permissions" {
   user       = data.aws_iam_user.this.user_name
   policy_arn = aws_iam_policy.pipeline_permissions.arn
 }
+
