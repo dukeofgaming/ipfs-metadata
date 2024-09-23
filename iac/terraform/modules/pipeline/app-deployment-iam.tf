@@ -1,42 +1,23 @@
-resource "aws_iam_policy" "pipeline_permissions" {
-  name        = "PipelinePermissionsPolicy-${var.name}-${var.environment}"
-  description = "Policy to grant permissions for pipeline operations"
-
-  policy = data.aws_iam_policy_document.pipeline_permissions.json
-}
-
 locals {
-  yaml_policy_statements_path  = "${path.module}/policies"
-  yaml_fileset        = fileset(local.yaml_policy_statements_path, "*.yml")
-  policy_yaml_files   = { 
-    for file_name in local.yaml_fileset : 
-      split(
-        ".",
-        file_name
-      )[0] => yamldecode(
-        file("${local.yaml_policy_statements_path}/${file_name}")
-      ) 
-  }
+  yaml_policy_statements_path  = "${path.module}/policy_statements"
+  
 }
 
+module "pipeline_user_policy" {
+  source = "../aws-iam-policy"
 
-data "aws_iam_policy_document" "pipeline_permissions" {
-  version = "2012-10-17"
-
-  dynamic statement {
-    for_each = local.policy_yaml_files
-    content{
-      effect    = local.policy_yaml_files[statement.key].policy.statement.effect
-      actions   = local.policy_yaml_files[statement.key].policy.statement.actions
-      resources = local.policy_yaml_files[statement.key].policy.statement.resources
+  policy_name         = "PipelinePermissionsPolicy-${var.name}-${var.environment}"
+  policy_description  = "Policy to grant permissions for pipeline operations"
+  
+  policy_document     = {
+    version   = "2012-10-17"
+    statements = {
+      for file_name in fileset(local.yaml_policy_statements_path, "*.yml") : 
+        split(".", file_name)[0] => yamldecode(
+          file("${local.yaml_policy_statements_path}/${file_name}")
+        )
     }
   }
+  
+  policy_users        = [data.aws_iam_user.this.user_name]
 }
-
-
-
-resource "aws_iam_user_policy_attachment" "pipeline_permissions" {
-  user       = data.aws_iam_user.this.user_name
-  policy_arn = aws_iam_policy.pipeline_permissions.arn
-}
-

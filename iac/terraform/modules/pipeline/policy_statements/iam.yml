@@ -1,0 +1,19 @@
+resources:
+  - '*'
+actions:
+  - iam:GetRole
+  - iam:ListRolePolicies
+  - iam:ListAttachedRolePolicies
+  - iam:PassRole
+  - iam:DetachRolePolicy
+  - iam:ListInstanceProfilesForRole
+  - iam:DeleteRole
+  - iam:CreateRole
+  - iam:TagRole
+  - iam:AttachRolePolicy
+  - iam:GetPolicy
+  - iam:GetPolicyVersion
+  - iam:ListPolicyVersions
+  - iam:DeletePolicy
+  - iam:CreatePolicy
+  - iam:TagPolicy

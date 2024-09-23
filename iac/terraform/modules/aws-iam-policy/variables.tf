@@ -8,17 +8,17 @@ variable "policy_description" {
   type        = string
 }
 
-variable "policy_documents" {
+variable "policy_document" {
     description = "The policy document to attach to the IAM policy"
     type        = object({
 
         version   : optional(string)
-        statement : map(
+        statements : map(
             object({                        # Key is statement id
                 use_key_as_sid : optional(bool, false)
 
                 sid       : optional(string)
-                effect    : string
+                effect    : optional(string, "Allow")
                 actions   : set(string)
                 resources : set(string)
 

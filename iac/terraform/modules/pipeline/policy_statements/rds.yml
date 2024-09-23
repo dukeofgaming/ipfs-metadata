@@ -1,0 +1,17 @@
+resources:
+  - "*"
+actions:
+  - "rds:DescribeDBParameterGroups"
+  - "rds:DescribeDBParameters"
+  - "rds:ListTagsForResource"
+  - "rds:DescribeDBSubnetGroups"
+  - "rds:DescribeDBInstances"
+  - "rds:DeleteDBInstance"
+  - "rds:DeleteDBParameterGroup"
+  - "rds:DeleteDBSubnetGroup"
+  - "rds:CreateDBParameterGroup"
+  - "rds:AddTagsToResource"
+  - "rds:ModifyDBParameterGroup"
+  - "rds:CreateDBInstance"
+  - "rds:CreateDBSubnetGroup"
+  - "rds:ModifyDBInstance"

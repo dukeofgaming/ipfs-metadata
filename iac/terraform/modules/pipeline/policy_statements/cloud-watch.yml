@@ -1,0 +1,9 @@
+resources:
+  - "*"
+actions:
+  - logs:DescribeLogGroups
+  - logs:ListTagsForResource
+  - logs:DeleteLogGroup
+  - logs:CreateLogGroup
+  - logs:TagResource
+  - logs:PutRetentionPolicy
