@@ -6,15 +6,15 @@ resource "aws_iam_policy" "pipeline_permissions" {
 }
 
 locals {
-  yaml_policies_path  = "${path.module}/policies"
-  yaml_fileset        = fileset(local.yaml_policies_path, "*.yml")
+  yaml_policy_statements_path  = "${path.module}/policies"
+  yaml_fileset        = fileset(local.yaml_policy_statements_path, "*.yml")
   policy_yaml_files   = { 
     for file_name in local.yaml_fileset : 
       split(
         ".",
         file_name
       )[0] => yamldecode(
-        file("${local.yaml_policies_path}/${file_name}")
+        file("${local.yaml_policy_statements_path}/${file_name}")
       ) 
   }
 }
