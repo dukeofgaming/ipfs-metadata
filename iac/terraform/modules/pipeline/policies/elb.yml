@@ -1,0 +1,22 @@
+policy:
+  statements:
+    - effect: Allow
+      actions:
+        - elasticloadbalancing:DescribeLoadBalancers
+        - elasticloadbalancing:DescribeLoadBalancerAttributes
+        - elasticloadbalancing:DescribeTags
+        - elasticloadbalancing:DescribeTargetGroups
+        - elasticloadbalancing:DescribeTargetGroupAttributes
+        - elasticloadbalancing:DescribeListeners
+        - elasticloadbalancing:DeleteListener
+        - elasticloadbalancing:DeleteTargetGroup
+        - elasticloadbalancing:DeleteLoadBalancer
+        - elasticloadbalancing:CreateLoadBalancer
+        - elasticloadbalancing:AddTags
+        - elasticloadbalancing:ModifyLoadBalancerAttributes
+        - elasticloadbalancing:CreateTargetGroup
+        - elasticloadbalancing:ModifyTargetGroupAttributes
+        - elasticloadbalancing:ModifyTargetGroup
+        - elasticloadbalancing:CreateListener
+      resources:
+        - "*"
